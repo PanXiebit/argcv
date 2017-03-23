@@ -25,7 +25,10 @@ licenses(["notice"])  # MIT
 package(default_visibility = ["//visibility:public"])
 
 cc_library(
-    name = "libargcv.so",
+    name = "argcv",
+    # srcs = [
+    #   "empty.cc",
+    # ],
     deps = [
       "//argcv/c:argcv_sys",
       "//argcv/c:argcv_char",
@@ -33,9 +36,12 @@ cc_library(
 )
 
 cc_library(
-    name = "libargcv_cc.so",
+    name = "argcv_cc",
+    # srcs = [
+    #   "empty.cc",
+    # ],
     deps = [
-      ":libargcv.so",
+      ":argcv",
       "//argcv/cxx:argcv_concurrent",
     ]
 )
