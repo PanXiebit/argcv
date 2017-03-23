@@ -31,7 +31,8 @@ cc_binary(
         ],
     ),
     deps = [
-        ":hello_world_lib"
+        ":hello_world_lib",
+        "//external:glog",
     ],
     visibility = ["//visibility:public"],
 )

@@ -302,5 +302,37 @@ def argcv_deps():
       actual = "@zlib_archive//:zlib",
   )
   
+  native.new_http_archive(
+      name = "gflags_archive",
+      build_file = "third_party/gflags.BUILD",  # Upstream's BUILD file doesn't quite work.
+      sha256 = "659de3fab5ba5a0376e3c2da333e4ecec9c8a4b41709861765e28e02dd562f7a",
+      strip_prefix = "gflags-cce68f0c9c5d054017425e6e6fd54f696d36e8ee",
+      url = "https://github.com/gflags/gflags/archive/cce68f0c9c5d054017425e6e6fd54f696d36e8ee.zip",
+  )
+  
+  native.bind(
+    name = "gflags",
+    actual = "@gflags_archive//:gflags",
+  )
+  
+  native.new_local_repository(
+    name = "glog_config",
+    path = "third_party/glog",
+    build_file = "third_party/glog/BUILD",
+  )
+
+  native.new_http_archive(
+    name = "glog_archive",
+    build_file = "third_party/glog.BUILD",
+    sha256 = "8fd1eca8e8e24d7240a106cf8183221f5319b6b7b69bcc1bb5f3826ade2bb4cd",
+    strip_prefix = "glog-cf36dabd8e24469c1b16748711f38c0d08085b36",
+    url = "https://github.com/google/glog/archive/cf36dabd8e24469c1b16748711f38c0d08085b36.zip",
+  )
+  
+  native.bind(
+    name = "glog",
+    actual = "@glog_archive//:glog",
+  )
+  
   # print("argcv configuring deps finished...")
 
