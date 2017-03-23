@@ -37,6 +37,8 @@ TEST(FactorialTest, Second) { EXPECT_NE(1, std::max(1, 2)); }
 
 TEST(FactorialTest, Third) { EXPECT_LT(std::min(1, 2), std::max(1, 2)); }
 
+TEST(FactorialTest, Forth) { EXPECT_NEAR(3.14159, 3.1413, 0.001); }
+
 class ExampleOfTestFTest : public testing::Test {
  private:
   class Agent {

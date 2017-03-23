@@ -36,6 +36,7 @@ cc_library(
     name = "libargcv_cc.so",
     deps = [
       ":libargcv.so",
+      "//argcv/cxx:argcv_concurrent",
     ]
 )
 
