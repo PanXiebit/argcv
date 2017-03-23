@@ -30,16 +30,28 @@
 #include "examples/cxx/hello_world/hello_world_lib.h"
 #include "glog/logging.h"
 
+void func() {
+  for (int i = 0; i < 100; i++) {
+    LOG_IF_EVERY_N(INFO, (i > 10), 10) << "Hello, World!"
+                                       << " for loop at " << i << "th";
+  }
+}
+
 int main(int argc, char* argv[]) {
   printf("Hello, World! %d\n", p1(argc));
-  google::InitGoogleLogging(argv[0]);  
+  google::InitGoogleLogging(argv[0]);
 
-  FLAGS_log_dir = ".";  
+  FLAGS_log_dir = ".";
+  FLAGS_stderrthreshold = 0;  // 2 in default
+  FLAGS_minloglevel = 0;
+  FLAGS_colorlogtostderr = true;
+
+  func();
 
   LOG(INFO) << "hello, info@glog";
   LOG(WARNING) << "hello, warning@glog";
   LOG(ERROR) << "hello, error@glog";
-  
+
   // this will cause a crash
   LOG(FATAL) << "hello, fatal@glog";
   return 0;

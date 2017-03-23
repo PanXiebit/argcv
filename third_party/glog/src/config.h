@@ -1,3 +1,6 @@
+// Copyright (c) 2006, Google Inc.
+#ifndef THIRD_PARTY_GLOG_SRC_CONFIG_H_
+#define THIRD_PARTY_GLOG_SRC_CONFIG_H_
 /* src/config.h.  Generated from config.h.in by configure.  */
 /* src/config.h.in.  Generated from configure.ac by autoheader.  */
 
@@ -85,7 +88,7 @@
 /* Define to 1 if you have the <syscall.h> header file. */
 #ifdef __linux__
 #define HAVE_SYSCALL_H 1
-#endif
+#endif  // __linux__
 
 /* Define to 1 if you have the <syslog.h> header file. */
 #define HAVE_SYSLOG_H 1
@@ -161,7 +164,7 @@
 #define PC_FROM_UCONTEXT uc_mcontext->__ss.__rip
 #else
 #undef PC_FROM_UCONTEXT
-#endif
+#endif  // __linux__
 
 /* Define to necessary symbol if this constant uses a non-standard name on
    your system. */
@@ -187,3 +190,4 @@
 
 /* Puts following code inside the Google namespace */
 #define _START_GOOGLE_NAMESPACE_ namespace google {
+#endif  // THIRD_PARTY_GLOG_SRC_CONFIG_H_
