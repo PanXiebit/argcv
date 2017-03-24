@@ -63,6 +63,7 @@ cc_test(
         "concurrent/*_test.h",
     ]),
     deps = [
+        "//external:glog",
         "//external:gtest_main",
         ":argcv_concurrent",
         ":gtest_ext",

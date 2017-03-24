@@ -32,23 +32,35 @@
 
 #include "argcv/cxx/concurrent/atomic.h"
 #include "argcv/cxx/test/gtest_ext.h"
+#include "glog/logging.h"
 #include "gtest/gtest.h"
 
 using namespace argcv::concurrent;  // NOLINT(build/namespaces)
 
 TEST(thread_pool, plus_one) {
+  google::InitGoogleLogging("test::thread_pool::plus_one");
+
+  FLAGS_log_dir = ".";
+  FLAGS_stderrthreshold = 0;  // 2 in default
+  FLAGS_minloglevel = 0;
+  FLAGS_colorlogtostderr = true;
+
   atomic<uint32_t> apple(0);
   size_t thread_size = 3;
   size_t task_size = 100;
   ThreadPool pool(thread_size);
-  bool all_done = true;
+
   std::vector<std::future<uint32_t> > results;
+  uint32_t gt_score = 0;
   for (size_t i = 0; i < task_size; i++) {
+    gt_score += (uint32_t)i;
     results.emplace_back(pool.enqueue([i, thread_size, task_size, &apple] {
-      printf("[test_case_threads] start: %zu of %zu\n", i, task_size);
+      LOG(INFO) << "[test_case_threads] start: " << i << " of [" << thread_size
+                << " @ " << task_size << "]";
       // usleep(i);
       uint32_t res = atomic_fetch_add<uint32_t>(&apple, (uint32_t)1);
-      printf("[test_case_threads] end: %zu of %zu\n", i, task_size);
+      LOG(INFO) << "[test_case_threads] end: " << i << " of [" << thread_size
+                << " @ " << task_size << "]";
       return res;
     }));
   }
@@ -57,6 +69,6 @@ TEST(thread_pool, plus_one) {
   for (auto &&result : results) {
     score += static_cast<uint32_t>(result.get());
   }
-  EXPECT_EQ((uint32_t)4950, score);
+  EXPECT_EQ(gt_score, score);
   EXPECT_EQ((uint32_t)100, apple.load());
 }
