@@ -324,9 +324,9 @@ def argcv_deps():
   native.new_http_archive(
     name = "glog_archive",
     build_file = str(Label("//third_party:glog.BUILD")),
-    sha256 = "8fd1eca8e8e24d7240a106cf8183221f5319b6b7b69bcc1bb5f3826ade2bb4cd",
-    strip_prefix = "glog-cf36dabd8e24469c1b16748711f38c0d08085b36",
-    url = "https://github.com/google/glog/archive/cf36dabd8e24469c1b16748711f38c0d08085b36.zip",
+    sha256 = "b2f35994772423a6f51e885e57a345350bac70a5aee8e035428643c0a0a4ca30",
+    strip_prefix = "glog-da816ea70645e463aa04f9564544939fa327d5a7",
+    url = "https://github.com/google/glog/archive/da816ea70645e463aa04f9564544939fa327d5a7.zip",
   )
   
   native.bind(
