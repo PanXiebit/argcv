@@ -26,7 +26,10 @@
 #include "examples/cxx/hello_world/hello_world_lib.h"
 #include <cstdio>
 
+#include "glog/logging.h"
+
 int p1(int a) {
-  printf("[p1 %s:%d] %d <- %d\n", __FILE__, __LINE__, a + 1, a);
+  LOG(INFO) << __FILE__ << "#" << __LINE__ << " update: " << a + 1 << " <- "
+            << a;
   return a + 1;
 }

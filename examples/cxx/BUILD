@@ -19,6 +19,9 @@ cc_library(
           "hello_world/hello_world.h",
         ],
     ),
+    deps = [
+        "//external:glog",
+    ],
     visibility = ["//visibility:public"],
 )
 

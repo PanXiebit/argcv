@@ -59,58 +59,58 @@ void boost_example() {
   // You can this algorithm with iterators(minimum Bidirectional)
   std::vector<int> vec{1, 2, 1};
   if (ba::is_palindrome(vec.begin(), vec.end()))
-    std::cout << "This container is palindrome" << std::endl;
+    LOG(INFO) << "This container is palindrome";
   else
-    std::cout << "This container is not palindrome" << std::endl;
+    LOG(INFO) << "This container is not palindrome";
 
   // Of course, you can use const iterators
   if (ba::is_palindrome(vec.cbegin(), vec.cend()))
-    std::cout << "This container is palindrome" << std::endl;
+    LOG(INFO) << "This container is palindrome";
   else
-    std::cout << "This container is not palindrome" << std::endl;
+    LOG(INFO) << "This container is not palindrome";
 
   // Example with bidirectional iterators
   std::list<int> list{1, 2, 1};
   if (ba::is_palindrome(list.begin(), list.end()))
-    std::cout << "This container is palindrome" << std::endl;
+    LOG(INFO) << "This container is palindrome";
   else
-    std::cout << "This container is not palindrome" << std::endl;
+    LOG(INFO) << "This container is not palindrome";
 
   // You can use custom comparators like functions, functors, lambdas
   auto lambdaComparator = [](int v1, int v2) { return v1 == v2; };
   auto objFunc = std::function<bool(int, int)>(lambdaComparator);
 
   if (ba::is_palindrome(vec.begin(), vec.end(), lambdaComparator))
-    std::cout << "This container is palindrome" << std::endl;
+    LOG(INFO) << "This container is palindrome";
   else
-    std::cout << "This container is not palindrome" << std::endl;
+    LOG(INFO) << "This container is not palindrome";
 
   if (ba::is_palindrome(vec.begin(), vec.end(), funcComparator<int>))
-    std::cout << "This container is palindrome" << std::endl;
+    LOG(INFO) << "This container is palindrome";
   else
-    std::cout << "This container is not palindrome" << std::endl;
+    LOG(INFO) << "This container is not palindrome";
 
   if (ba::is_palindrome(vec.begin(), vec.end(), functorComparator()))
-    std::cout << "This container is palindrome" << std::endl;
+    LOG(INFO) << "This container is palindrome";
   else
-    std::cout << "This container is not palindrome" << std::endl;
+    LOG(INFO) << "This container is not palindrome";
 
   if (ba::is_palindrome(vec.begin(), vec.end(), objFunc))
-    std::cout << "This container is palindrome" << std::endl;
+    LOG(INFO) << "This container is palindrome";
   else
-    std::cout << "This container is not palindrome" << std::endl;
+    LOG(INFO) << "This container is not palindrome";
 
   // You can use ranges
   if (ba::is_palindrome(vec))
-    std::cout << "This container is palindrome" << std::endl;
+    LOG(INFO) << "This container is palindrome";
   else
-    std::cout << "This container is not palindrome" << std::endl;
+    LOG(INFO) << "This container is not palindrome";
 
   // You can use C-strings
   if (ba::is_palindrome("aba"))
-    std::cout << "This C-string is palindrome" << std::endl;
+    LOG(INFO) << "This C-string is palindrome";
   else
-    std::cout << "This C-string is not palindrome" << std::endl;
+    LOG(INFO) << "This C-string is not palindrome";
 }
 
 void func() {
@@ -121,7 +121,6 @@ void func() {
 }
 
 int main(int argc, char* argv[]) {
-  printf("Hello, World! %d\n", p1(argc));
   google::InitGoogleLogging(argv[0]);
 
   FLAGS_log_dir = ".";
@@ -131,6 +130,8 @@ int main(int argc, char* argv[]) {
 
   boost_example();
 
+  LOG(INFO) << "Hello, World! ~~~" << p1(argc);
+
   func();
 
   LOG(INFO) << "hello, info@glog";
@@ -138,6 +139,6 @@ int main(int argc, char* argv[]) {
   LOG(ERROR) << "hello, error@glog";
 
   // this will cause a crash
-  LOG(FATAL) << "hello, fatal@glog";
+  // LOG(FATAL) << "hello, fatal@glog";
   return 0;
 }
