@@ -33,6 +33,7 @@ cc_binary(
     deps = [
         ":hello_world_lib",
         "//external:glog",
+        "@boost//:algorithm",
     ],
     visibility = ["//visibility:public"],
 )

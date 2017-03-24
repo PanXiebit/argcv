@@ -334,5 +334,14 @@ def argcv_deps():
     actual = "@glog_archive//:glog",
   )
   
-  # print("argcv configuring deps finished...")
+  # # based on https://github.com/nelhage/rules_boost
+  native.new_http_archive(
+    name = "boost",
+    # url = "https://nelhage.s3.amazonaws.com/rules_boost/boost_1_63_0.tar.bz2",
+    url = "https://doc.argcv.com/repo/bazel/boost_1_63_0.tar.bz2",
+    build_file = "third_party/boost.BUILD",  #str(Label("//third_party:boost.BUILD")),
+    strip_prefix = "boost_1_63_0/",
+    sha256 = "beae2529f759f6b3bf3f4969a19c2e9d6f0c503edcb2de4a61d1428519fcb3b0",
+  )
+  # # print("argcv configuring deps finished...")
 
