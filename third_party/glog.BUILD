@@ -1,3 +1,7 @@
+# This file is based on
+# https://github.com/google/kythe/blob/master/third_party/googlelog.BUILD
+# 
+# Please check https://github.com/google/glog/issues/61 for more options
 package(default_visibility = ["//visibility:public"])
 
 licenses(["notice"])  # BSD
