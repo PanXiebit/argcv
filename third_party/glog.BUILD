@@ -37,7 +37,7 @@ cc_library(
     ],
     copts = [
         "-D_XOPEN_SOURCE",
-        "-Ithird_party/googlelog/src",
+        # "-Ithird_party/glog/src",
     ],
     linkopts = [
         "-lpthread",

@@ -304,7 +304,7 @@ def argcv_deps():
   
   native.new_http_archive(
       name = "gflags_archive",
-      build_file = "third_party/gflags.BUILD",  # Upstream's BUILD file doesn't quite work.
+      build_file = str(Label("//third_party:gflags.BUILD")), # Use Customized Build File
       sha256 = "659de3fab5ba5a0376e3c2da333e4ecec9c8a4b41709861765e28e02dd562f7a",
       strip_prefix = "gflags-cce68f0c9c5d054017425e6e6fd54f696d36e8ee",
       url = "https://github.com/gflags/gflags/archive/cce68f0c9c5d054017425e6e6fd54f696d36e8ee.zip",
@@ -323,7 +323,7 @@ def argcv_deps():
 
   native.new_http_archive(
     name = "glog_archive",
-    build_file = "third_party/glog.BUILD",
+    build_file = str(Label("//third_party:glog.BUILD")),
     sha256 = "8fd1eca8e8e24d7240a106cf8183221f5319b6b7b69bcc1bb5f3826ade2bb4cd",
     strip_prefix = "glog-cf36dabd8e24469c1b16748711f38c0d08085b36",
     url = "https://github.com/google/glog/archive/cf36dabd8e24469c1b16748711f38c0d08085b36.zip",
