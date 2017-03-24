@@ -1,7 +1,7 @@
 /**
  * The MIT License (MIT)
  *
- * Copyright (c) 2017 Yu Jing <yu@argcv.com>
+ * Copyright (c) 2016 Yu Jing <yu@argcv.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,46 +25,38 @@
  **/
 #include "argcv/cxx/concurrent/thread_pool.h"
 
-#include <condition_variable>  // NOLINT(build/c++11)
-#include <functional>
+#include <cstdio>
+
 #include <future>  // NOLINT(build/c++11)
-#include <memory>
-#include <mutex>  // NOLINT(build/c++11)
-#include <queue>
-#include <stdexcept>
-#include <thread>  // NOLINT(build/c++11)
-#include <utility>
 #include <vector>
 
-using argcv::concurrent::ThreadPool;
+#include "argcv/cxx/concurrent/atomic.h"
+#include "argcv/cxx/test/gtest_ext.h"
+#include "gtest/gtest.h"
 
-// the constructor just launches some amount of workers
-ThreadPool::ThreadPool(size_t threads) : stop(false) {
-  for (size_t i = 0; i < threads; ++i)
-    workers.emplace_back([this] {
-      for (;;) {
-        std::function<void()> task;
+using namespace argcv::concurrent;  // NOLINT(build/namespaces)
 
-        {
-          std::unique_lock<std::mutex> lock(this->queue_mutex);
-          this->condition.wait(
-              lock, [this] { return this->stop || !this->tasks.empty(); });
-          if (this->stop && this->tasks.empty()) return;
-          task = std::move(this->tasks.front());
-          this->tasks.pop();
-        }
-
-        task();
-      }
-    });
-}
-
-// the destructor joins all threads
-ThreadPool::~ThreadPool() {
-  {
-    std::unique_lock<std::mutex> lock(queue_mutex);
-    stop = true;
+TEST(thread_pool, plus_one) {
+  atomic<uint32_t> apple(0);
+  size_t thread_size = 3;
+  size_t task_size = 100;
+  ThreadPool pool(thread_size);
+  bool all_done = true;
+  std::vector<std::future<uint32_t> > results;
+  for (size_t i = 0; i < task_size; i++) {
+    results.emplace_back(pool.enqueue([i, thread_size, task_size, &apple] {
+      printf("[test_case_threads] start: %zu of %zu\n", i, task_size);
+      // usleep(i);
+      uint32_t res = atomic_fetch_add<uint32_t>(&apple, (uint32_t)1);
+      printf("[test_case_threads] end: %zu of %zu\n", i, task_size);
+      return res;
+    }));
   }
-  condition.notify_all();
-  for (std::thread& worker : workers) worker.join();
+
+  uint32_t score = 0;
+  for (auto &&result : results) {
+    score += static_cast<uint32_t>(result.get());
+  }
+  EXPECT_EQ((uint32_t)4950, score);
+  EXPECT_EQ((uint32_t)100, apple.load());
 }
