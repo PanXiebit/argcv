@@ -56,18 +56,17 @@ cc_library(
 )
 
 
-# cc_library(
-cc_inc_library(
+cc_library(
   name = "argcv_nio",
-  # srcs = glob(
-  #   [
-  #     "nio/*.c",
-  #     "nio/*.cc",
-  #   ],
-  #   exclude = [
-  #     "nio/*_test.cc",
-  #   ],
-  # ),
+  srcs = glob(
+    [
+      "nio/*.c",
+      "nio/*.cc",
+    ],
+    exclude = [
+      "nio/*_test.cc",
+    ],
+  ),
   hdrs = glob(
     [
       "nio/*.h",

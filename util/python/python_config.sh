@@ -28,6 +28,8 @@ EXPECTED_PATHS="$script_path/util/python/python_include"\
 " $script_path/util/python/python_lib"\
 " $script_path/third_party/py/numpy/numpy_include"
 
+fd=0   # stdin, for test non-interactive
+
 function main {
   argument="$1"
   shift
@@ -130,7 +132,16 @@ function setup_python {
       done
       set -- "${python_lib_path[@]}"
       echo "Please input the desired Python library path to use.  Default is ["$1"]"
-      read b || true
+
+      # read b || true
+      if [[ -t "$fd" || -p /dev/stdin ]]
+      then
+        read b || true
+      else
+        "Since you are in non-interactive mode, directly set as ''"
+        b=""
+      fi
+
       if [ "$b" == "" ]; then
         PYTHON_LIB_PATH="$(default_python_path "${python_lib_path[0]}")"
         echo "Using python library path: $PYTHON_LIB_PATH"

@@ -28,7 +28,7 @@
 namespace argcv {
 namespace nio {
 const std::string sockStatusExplain(SockStatus status) {
-  switch (status_) {
+  switch (status) {
     case SockStatus::kSockInvalid:
       return "SockStatus::kSockInvalid";
     case SockStatus::kSockClosed:

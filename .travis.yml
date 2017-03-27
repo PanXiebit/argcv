@@ -1,16 +1,29 @@
 language:
   - java
   - c++
+  - python
 jdk:
   - oraclejdk8  # Building Bazel requires JDK8.
 before_install:
-  - wget https://github.com/bazelbuild/bazel/archive/0.4.5.zip  # Replace with desired version
-  - unzip 0.4.5.zip
-  - cd bazel-0.4.5
-  - ./compile.sh
-  - sudo cp output/bazel /usr/bin/bazel
-  - cd ..
-  - rm -rf bazel-0.4.5
+  - sudo apt-get update
+  - sudo apt-get install python3
+  # bazel
+  - pwd # check current dir
+  - echo $PATH
+  - wget https://github.com/bazelbuild/bazel/releases/download/0.4.5/bazel-0.4.5-installer-linux-x86_64.sh -O bazel-installer.sh
+  - chmod +x bazel-installer.sh
+  - sudo ./bazel-installer.sh # require javac
+  - sudo rm -rf bazel-installer.sh
+  # numpy
+  - wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh
+  - chmod +x miniconda.sh
+  - ./miniconda.sh -b # require: bzip2, tar  command with path: ./miniconda.sh -b -p /home/travis/mc
+  - rm -rf miniconda.sh
+  - export PATH=`pwd`/miniconda3/bin:$PATH
+  - conda install --yes numpy # current is 1.12.1-py36_0
+
 script:
+  # setup python
+  - ./setup
   - bazel build //...
   - bazel test //...

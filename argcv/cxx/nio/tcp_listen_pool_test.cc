@@ -57,6 +57,7 @@ void echo_server_test(int *status) {
   EXPECT_EQ(0, pool.error_no());
   LOG(INFO) << "LISTENING...";
   (*status) = 1;
+  LOG(INFO) << "status =>" << (*status);
   for (;;) {
     int id = pool.poll(0);
     if (id != -1) {
@@ -173,7 +174,10 @@ TEST(thread_pool, echo) {
   int serve_status = 0;
 
   std::thread my_server(echo_server_test, &serve_status);
-  while (serve_status == 0) std::this_thread::yield();
+  while (serve_status == 0) {
+    usleep(333);
+    LOG(INFO) << "waiting...";
+  }
   LOG(INFO) << "starting...";
   int sock_fd = tcp_connect("127.0.0.1", "19527");
 
