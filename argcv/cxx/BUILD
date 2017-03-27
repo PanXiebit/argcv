@@ -35,38 +35,76 @@ cc_inc_library(
 )
 
 cc_library(
-    name = "argcv_concurrent",
-    srcs = glob(
-        [
-          "concurrent/*.c",
-          "concurrent/*.cc",
-        ],
-        exclude = [
-          "concurrent/*_test.cc",
-        ],
-    ),
-    hdrs = glob(
-        [
-          "concurrent/*.h",
-        ],
-        exclude = [
-          "concurrent/*_test.h",
-        ],
-    )
+  name = "argcv_concurrent",
+  srcs = glob(
+    [
+      "concurrent/*.c",
+      "concurrent/*.cc",
+    ],
+    exclude = [
+      "concurrent/*_test.cc",
+    ],
+  ),
+  hdrs = glob(
+    [
+      "concurrent/*.h",
+    ],
+    exclude = [
+      "concurrent/*_test.h",
+    ],
+  )
 )
 
+
+# cc_library(
+cc_inc_library(
+  name = "argcv_nio",
+  # srcs = glob(
+  #   [
+  #     "nio/*.c",
+  #     "nio/*.cc",
+  #   ],
+  #   exclude = [
+  #     "nio/*_test.cc",
+  #   ],
+  # ),
+  hdrs = glob(
+    [
+      "nio/*.h",
+    ],
+    exclude = [
+      "nio/*_test.h",
+    ],
+  ),
+  deps = [
+    "//external:glog",
+  ],
+)
 
 cc_test(
-    name = "argcv_concurrent_test",
-    srcs = glob([
-        "concurrent/*_test.cc",
-        "concurrent/*_test.h",
-    ]),
-    deps = [
-        "//external:glog",
-        "//external:gtest_main",
-        ":argcv_concurrent",
-        ":gtest_ext",
-    ],
+  name = "argcv_concurrent_test",
+  srcs = glob([
+    "concurrent/*_test.cc",
+    "concurrent/*_test.h",
+  ]),
+  deps = [
+    "//external:glog",
+    "//external:gtest_main",
+    ":argcv_concurrent",
+    ":gtest_ext",
+  ],
 )
 
+cc_test(
+  name = "argcv_nio_test",
+  srcs = glob([
+    "nio/*_test.cc",
+    "nio/*_test.h",
+  ]),
+  deps = [
+    "//external:glog",
+    "//external:gtest_main",
+    ":argcv_nio",
+    # ":gtest_ext",
+  ],
+)

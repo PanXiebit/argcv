@@ -1,0 +1,637 @@
+/**
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2017 Yu Jing <yu@argcv.com>
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ *all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ *
+ **/
+#ifndef ARGCV_CXX_NIO_TCP_LISTEN_POOL_H_
+#define ARGCV_CXX_NIO_TCP_LISTEN_POOL_H_
+
+// for network io
+
+#ifdef __linux__
+#define __EPOLL__ 1
+#elif defined(__APPLE__) || defined(__FreeBSD__) || defined(__OpenBSD__) || \
+    defined(__NetBSD__)
+#define __KQUEUE__ 1
+#else  // ERROR/TODO use SELECT
+#error "NEITHOR OF EPOLL AND KQUEUE ARE AVAILABLE"
+#endif  // __linux__ or __APPLE__
+
+#ifdef __EPOLL__
+#include <sys/epoll.h>
+#elif __KQUEUE__
+#include <sys/event.h>
+#endif  // __KQUEUE__
+
+#include <arpa/inet.h>
+#include <assert.h>
+#include <errno.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/socket.h>
+#include <sys/types.h>
+#include <unistd.h>
+
+#include <fcntl.h>  // for fctl open
+
+#include <string>
+
+#include "glog/logging.h"
+
+namespace argcv {
+namespace nio {
+
+#define LISTENSOCKET (void *)((intptr_t)~0)
+static const int kSzListenQ = 32;
+static const int kSzPullMax = 102400;  // max pull size 10MB
+
+enum class SockStatus : unsigned char {
+  kSockInvalid,
+  kSockClosed,
+  kSockSuspend,
+  // kSockRead,
+  kSockPollin,
+  kSockAlive = static_cast<int>(kSockSuspend)
+};
+
+const std::string sockStatusExplain(SockStatus status);
+
+class TcpListenPool {
+ public:
+  class Conn {
+   public:
+    Conn() : status_(SockStatus::kSockInvalid) {}
+    ~Conn() {
+      LOG(INFO) << "[~conn] " << index_ << "#" << fd_;
+      if (status_ >= SockStatus::kSockAlive) {
+        close(fd_);
+      }
+    }
+
+    bool assign(TcpListenPool *m_pool, int m_index, int m_fd) {
+      pool_ = m_pool;
+      index_ = m_index;
+      fd_ = m_fd;
+      // printf("init %d\n",pool_->_port());
+      return true;
+    }
+
+    int fd() { return fd_; }
+    void fd(int m_fd) { fd_ = m_fd; }
+
+    int index() { return index_; }
+
+    SockStatus status() { return status_; }
+    void status(SockStatus m_status) { status_ = m_status; }
+
+    void reset(int m_fd, SockStatus m_status) {
+      data_.clear();
+      fd_ = m_fd;
+      status_ = m_status;
+    }
+
+    void push(const std::string &d) { data_ += d; }
+
+    size_t size() { return data_.size(); }
+
+    void flush() {
+      if (closed()) {
+        pool_->closed_size_dec();
+        status_ = SockStatus::kSockInvalid;
+        fd_ = pool_->update_free_co_clue(index_);
+        data_.clear();
+      }
+    }
+
+    void clear() {
+      // cleanup the buffer
+      data_.clear();
+    }
+
+    bool closed() {
+      return SockStatus::kSockClosed == status_ && data_.empty();
+    }
+    bool empty() { return data_.empty(); }
+
+    const std::string &to_str() const { return data_; }
+    ssize_t write(const std::string &data, size_t sz) {
+      // return send(fd,data.c_str(),sz,MSG_DONTWAIT);
+      for (;;) {
+        ssize_t n_bytes = send(fd_, data.c_str(), sz,
+                               MSG_DONTWAIT
+#ifdef MSG_NOSIGNAL
+                                   | MSG_NOSIGNAL
+#endif                             // MSG_NOSIGNAL
+                               );  // NOLINT(whitespace/parens)
+        // int n_bytes = ::write(fd, data.c_str(), sz);//
+        if (0 == n_bytes) {
+          deactive();
+        } else if (-1 == n_bytes) {
+          switch (errno) {  // #include <error.h>
+            case EWOULDBLOCK:
+              status_ = SockStatus::kSockSuspend;
+              break;
+            case EINTR:
+              continue;
+            default:
+              deactive();
+              break;
+          }
+        }
+        return n_bytes;
+      }
+    }
+
+    ssize_t pull(int32_t sz = 2048) {
+      switch (status_) {
+        // case SockStatus::kSockRead:
+        //    _c->_status(SockStatus::kSockSuspend);
+        case SockStatus::kSockClosed:
+        case SockStatus::kSockSuspend:
+          return -1;  // status: is closed
+        default:
+          if (SockStatus::kSockPollin != status_) {
+            LOG(WARNING) << "unexpected status: " << sockStatusExplain(status_);
+            return -2;  // unexpected status
+          }
+      }
+      int32_t szPull = (int32_t)(sz - size());  // check pull size we still need
+      if (szPull >= kSzPullMax)
+        szPull = kSzPullMax - 1;  // pull size limited into kSzPullMax
+      if (szPull > 0) {
+        for (;;) {
+          // char buffer[szPull + 1];
+          char buffer[kSzPullMax];
+          memset(buffer, 0, sizeof(char) * kSzPullMax);
+          ssize_t n_bytes = recv(fd_, &buffer, (size_t)szPull, MSG_DONTWAIT);
+          if (0 < n_bytes) {
+            // _c->_status(SockStatus::kSockRead);
+            push(std::string(buffer, n_bytes));
+            break;
+          }
+          if (0 == n_bytes) {
+            deactive();
+            return 0;  // deactive
+          }
+          if (-1 == n_bytes) {  // some error founded
+            switch (errno) {    // #include <error.h>
+              case EWOULDBLOCK:
+                status_ = SockStatus::kSockSuspend;
+                break;
+              case EINTR:
+                continue;
+              default:
+                deactive();
+                break;
+            }
+            return -3;  // other error
+          }
+        }
+      }
+      return size();
+    }
+
+   private:
+    // conn(const conn &);  // Prevent copy-construction
+    // conn & operator=(const conn &);  // Prevent assignment
+    TcpListenPool *pool_;
+    int index_;
+    int fd_;
+    std::string data_;
+    SockStatus status_;
+
+    void deactive() {
+      status_ = SockStatus::kSockClosed;
+      data_.clear();
+      close(fd_);
+      LOG(INFO) << "[conn::deactive] close " << index_ << " (fd=" << fd_ << ")";
+#ifdef __EPOLL__
+      // int epoll_ctl(int epfd, int op, int fd, struct epoll_event *event);
+      epoll_ctl(pool_->ev_fd(), EPOLL_CTL_DEL, fd_, NULL);
+#elif __KQUEUE__
+      struct kevent ke;
+      EV_SET(&ke, fd_, EVFILT_READ, EV_DELETE, 0, 0, NULL);
+      kevent(pool_->ev_fd(), &ke, 1, NULL, 0, NULL);
+#endif  // __KQUEUE__
+      pool_->closed_size_inc();
+    }
+  };
+
+  TcpListenPool(int m_port, size_t m_max_conn_size = 1024,
+                size_t m_max_buff_size = 1024 * 1024 * 1024)
+      : port_(m_port),
+        max_conn_size_(m_max_conn_size),
+        co_(new Conn[m_max_conn_size]),
+        error_no_(0) {
+    LOG(INFO) << "starting TcpListenPool.. :" << m_port
+              << " max conn size:" << m_max_conn_size;
+    if (!init()) {
+      LOG(WARNING) << "TcpListenPool start failed...";
+      error_no_ = -1;  // start failed
+    }
+  }
+
+  ~TcpListenPool() {
+    delete[] co_;
+    if (listen_fd_ >= 0) {
+      close(listen_fd_);
+    }
+    if (ev_fd_ >= 0) {
+      close(ev_fd_);
+    }
+    LOG(INFO) << "TcpListenPool closed";
+  }
+
+  const int port() const { return port_; }
+  const size_t max_conn_size() const { return max_conn_size_; }
+  const int error_no() const { return error_no_; }
+
+  Conn &get(size_t idx) { return co_[idx]; }
+  Conn &operator[](size_t idx) { return co_[idx]; }
+
+  int conn_id(size_t index_) { return co_[index_].fd(); }
+
+  int &ev_fd() { return ev_fd_; }
+
+  int poll(int timeout) {  // get a new id
+    if (sz_closed_ > 0) {
+      int closed_fd = report_closed();
+      if (-1 != closed_fd) {
+        return closed_fd;
+      }
+    }
+
+    if (evq_head_ >= evq_len_) {
+      if (-1 == _evq_poll(timeout)) {
+        return -1;
+      }
+    }
+
+    int _1 __attribute__((unused)) = 1;
+
+    for (;;) {
+      void *_reply = _evq_read_one();
+      if (nullptr == _reply) {
+        // printf("_evq_read_one :: null ...\n");
+        return -1;
+      }
+      if (LISTENSOCKET == _reply) {
+        struct sockaddr_in remote_addr;
+        socklen_t len = sizeof(struct sockaddr_in);
+        int client_fd =
+            accept(listen_fd_, (struct sockaddr *)&remote_addr, &len);
+        if (client_fd >= 0) {
+          LOG(INFO) << "TcpListenPool::poll connect "
+                    << inet_ntoa(remote_addr.sin_addr) << ":"
+                    << ntohs(remote_addr.sin_port) << " (fd=" << client_fd
+                    << ")";
+#ifdef SO_NOSIGPIPE
+          // disaple SIGPIPE signalling for this socket on OSX
+          if (setsockopt(client_fd, SOL_SOCKET, SO_NOSIGPIPE, &_1,
+                         sizeof(_1)) == -1)
+            LOG(WARNING) << "[SOCKET] Failed to set SO_NOSIGPIPE: "
+                         << strerror(errno);
+#endif  // SO_NOSIGPIPE
+          active(client_fd);
+        }
+      } else {
+        // Conn *_c = (Conn *)_reply;
+        Conn *c = reinterpret_cast<Conn *>(_reply);
+        int idx = c->index();
+        c->status(SockStatus::kSockPollin);
+        return idx;
+      }
+    }
+  }
+
+  ssize_t pull(size_t idx, int sz = 2048) {
+    if (idx >= max_conn_size_) {
+      return -3;  // error: idx not found
+    }
+    return co_[idx].pull(sz);  //
+  }
+
+  ssize_t write(size_t idx, const std::string &data, size_t sz) {
+    if (idx >= max_conn_size_) {
+      return -1;
+    }
+    return co_[idx].write(data, sz);
+  }
+
+ private:
+  const int port_;
+  const size_t max_conn_size_;  // MAX connection Size
+  Conn *co_;
+
+  int error_no_;  // -1 : init failed
+
+  int listen_fd_;
+
+  int free_co_clue_;
+  // std::mutex _free_co_clue_mutex;
+
+  size_t evq_head_;
+  size_t evq_len_;
+
+  size_t sz_closed_;
+  // std::mutex closed_mutex;
+
+  int ev_fd_;
+#ifdef __EPOLL__
+  struct epoll_event ev_[kSzListenQ];
+#elif __KQUEUE__
+  struct kevent ev_[kSzListenQ];
+#endif  // __KQUEUE__
+  bool init() {
+    listen_fd_ = socket(AF_INET, SOCK_STREAM, 0);
+
+    if (-1 == listen_fd_) {
+      return false;
+    }
+
+    // set nonblocking
+    int no_blocking_flag = fcntl(listen_fd_, F_GETFL, 0);
+    if (-1 == no_blocking_flag) {
+      return false;
+    }
+    if (-1 == fcntl(listen_fd_, F_SETFL, no_blocking_flag | O_NONBLOCK)) {
+      return false;
+    }
+
+    int reuse = 1;
+    setsockopt(listen_fd_, SOL_SOCKET, SO_REUSEADDR, &reuse, sizeof(int));
+
+    struct sockaddr_in self_addr;
+    memset(&self_addr, 0, sizeof(struct sockaddr_in));
+    self_addr.sin_family = AF_INET;
+    self_addr.sin_port = htons(port_);
+    self_addr.sin_addr.s_addr = htonl(INADDR_ANY);  // INADDR_LOOPBACK
+
+    // char * b_addr = inet_ntoa(self_addr.sin_addr);
+    // uint16_t b_port = ntohs(self_addr.sin_port);
+    // printf("TcpListenPool bind to %s:%u\n",b_addr,b_port);
+
+    if (-1 == bind(listen_fd_, (struct sockaddr *)&self_addr,
+                   sizeof(struct sockaddr))) {
+      close(listen_fd_);
+      return false;
+    }
+    if (-1 == listen(listen_fd_, kSzListenQ)) {
+      close(listen_fd_);
+      return false;
+    }
+#ifdef __EPOLL__
+    ev_fd_ = epoll_create(max_conn_size_ + 1);
+    if (-1 == ev_fd_) {
+      close(listen_fd_);
+      return false;
+    }
+
+    struct epoll_event ee;
+    ee.events = EPOLLIN;
+    ee.data.ptr = LISTENSOCKET;
+
+    if (-1 == epoll_ctl(ev_fd_, EPOLL_CTL_ADD, listen_fd_, &ee)) {
+      close(listen_fd_);
+      close(ev_fd_);
+      return false;
+    }
+#elif __KQUEUE__
+    ev_fd_ = kqueue();
+    if (-1 == ev_fd_) {
+      close(listen_fd_);
+      return false;
+    }
+
+    struct kevent ke;
+    EV_SET(&ke, listen_fd_, EVFILT_READ, EV_ADD, 0, 0, LISTENSOCKET);
+    if (-1 == kevent(ev_fd_, &ke, 1, NULL, 0, NULL)) {
+      close(listen_fd_);
+      close(ev_fd_);
+      return false;
+    }
+#endif  // __KQUEUE__
+    for (size_t i = 0; i < max_conn_size_ - 1; i++) {
+      co_[i].assign(this, static_cast<int>(i), static_cast<int>(i + 1));
+    }
+    co_[max_conn_size_ - 1].assign(this, static_cast<int>(max_conn_size_ - 1),
+                                   -1);
+    free_co_clue_ = 0;
+    evq_head_ = 0;
+    evq_len_ = 0;
+    return true;
+  }
+
+  int _evq_poll(int timeout) {
+#ifdef __EPOLL__
+    int n = epoll_wait(ev_fd_, ev_, kSzListenQ, timeout);
+#elif __KQUEUE__
+    struct timespec timeoutspec;
+    timeoutspec.tv_sec = timeout / 1000;
+    timeoutspec.tv_nsec = (timeout % 1000) * 1000000;
+    int n = kevent(ev_fd_, NULL, 0, ev_, kSzListenQ, &timeoutspec);
+#endif  // __KQUEUE__
+
+    evq_head_ = 0;
+    if (n == -1) {
+      evq_len_ = 0;
+      return -1;
+    } else {
+      evq_len_ = n;
+      return n;
+    }
+  }
+  void *_evq_read_one() {
+    if (evq_head_ >= evq_len_) {
+      return nullptr;
+    }
+#ifdef __EPOLL__
+    return ev_[evq_head_++].data.ptr;
+// int n = epoll_wait(ev_fd , ev, kSzListenQ, timeout);
+#elif __KQUEUE__
+    return ev_[evq_head_++].udata;
+#endif  // __KQUEUE__
+  }
+
+  int co_alloc() {
+    // std::lock_guard<std::mutex> l(_free_co_clue_mutex);
+    if (-1 == free_co_clue_) {
+      return -1;
+    }
+    int s = free_co_clue_;
+    free_co_clue_ = co_[s].fd();
+    // printf("co_alloc::%d\n",s);
+    return s;
+  }
+
+  void active(int fd) {
+    int co_offset = co_alloc();
+    if (-1 == co_offset) {
+      LOG(WARNING) << "TcpListenPool::active for FD: " << fd
+                   << " **FAILED** , because assign connection failed";
+      return;
+    }
+#ifdef __EPOLL__
+    struct epoll_event ee;
+    ee.events = EPOLLIN;
+    ee.data.ptr = &(co_[co_offset]);
+    if (-1 == epoll_ctl(ev_fd_, EPOLL_CTL_ADD, fd, &ee)) {
+      close(fd);
+      LOG(WARNING) << "TcpListenPool::active for FD: " << fd
+                   << " **FAILED** , establish epoll failed";
+      return;
+    }
+#elif __KQUEUE__
+    struct kevent ke;
+    EV_SET(&ke, fd, EVFILT_READ, EV_ADD, 0, 0, &(co_[co_offset]));
+    if (-1 == kevent(ev_fd_, &ke, 1, NULL, 0, NULL)) {
+      close(fd);
+      LOG(WARNING) << "TcpListenPool::active for FD: " << fd
+                   << " **FAILED** , establish kevent failed";
+      return;
+    }
+#endif  // __KQUEUE__
+    co_[co_offset].reset(fd, SockStatus::kSockSuspend);
+    LOG(INFO) << "TcpListenPool::active for FD: " << fd << ", new connection";
+  }
+
+  int report_closed() {
+    for (size_t i = 0; i < max_conn_size_; i++) {
+      if (SockStatus::kSockClosed == co_[i].status()) {
+        return static_cast<int>(i);
+      }
+    }
+    return -1;
+  }
+
+  int update_free_co_clue(int offset) {
+    int rt_offset = free_co_clue_;
+    free_co_clue_ = offset;
+    return rt_offset;
+  }
+
+  void closed_size_inc() {  // increase
+    // std::lock_guard<std::mutex> l(closed_mutex);
+    sz_closed_++;
+  }
+
+  void closed_size_dec() {  // decrease
+    // std::lock_guard<std::mutex> l(closed_mutex);
+    sz_closed_--;
+  }
+};
+
+typedef TcpListenPool::Conn Conn;
+}  // namespace nio
+}  // namespace argcv
+
+/*
+sample 1 , echo :
+
+using namespace argcv::net;
+void echo_server() {
+    TcpListenPool pool(9527, 200000);
+    size_t sz_min_sleep = 100;
+    size_t sz_max_sleep = 300000;
+    size_t sz_sleep = sz_min_sleep;
+    if (pool._error_no() != 0) {
+        printf("pool establish failed .. %d \n", pool._error_no());
+    } else {
+        printf("pool established .. %d \n", pool._error_no());
+        for (;;) {
+            int id = pool.poll(0);
+            if (id != -1) {
+                sz_sleep = sz_min_sleep;
+                printf("#### id: %d\n", id);
+                TcpListenPool::conn &c = pool[id];
+                bool st = pool.pull(id, 1);
+                if (st) {
+                    // printf("data:[%s] %lu \n",c.to_str().c_str(),
+c.to_str().length());
+                    std::string s = c.to_str();
+                    for (size_t i = 0; i < c.to_str().length(); i++) {
+                        printf("%lu %d %c\n", i, c.to_str()[i], c.to_str()[i]);
+                    }
+                    // sleep(3);
+                    c.write(c.to_str(), c.to_str().length());
+                } else {
+                    if (c.closed()) {
+                        printf("is closed .. \n");
+                    } else {
+                        printf("unknown error ? \n status : %hhu\n",
+c._status());
+                    }
+                }
+                c.flush();
+            } else{
+                //printf("sleep ...[%lu] time %lu\n",loop++,sz_sleep);
+                //fflush(NULL);
+                sz_sleep *= 2;
+                if(sz_sleep > sz_max_sleep){
+                    sz_sleep = sz_max_sleep;
+                }
+                usleep(sz_sleep);
+            }
+        }
+    }
+}
+
+sample 2 , file_recv :
+void file_server() {
+    // echo_server();
+    TcpListenPool pool(9527, 1);
+    printf("send a file to server:\n\t$ cat xxx | nc localhost 9527\n");
+    if (pool._error_no() != 0) {
+        printf("pool establish failed .. %d \n", pool._error_no());
+    } else {
+        printf("pool established .. %d \n", pool._error_no());
+        FILE *f = fopen("recv.dat", "wb");
+        for (;;) {
+            int id = pool.poll(0);
+            if (id != -1) {
+                printf("#### id: %d\n", id);
+                conn &c = pool[id];
+                bool st = pool.pull(id);
+                if (st) {
+                    fwrite(c.to_str().c_str(), c.to_str().length(), 1, f);
+                    printf("accept : %lu bytes\n", c.to_str().length());
+                    c.flush();
+                } else {
+                    if (c.closed()) {
+                        printf("is closed .. \n");
+                        fclose(f);
+                    } else {
+                        printf("unknown error ? \n status : %hhu\n",
+c._status());
+                    }
+                    c.flush();
+                }
+            }
+        }
+    }
+}
+*/
+
+#endif  //  ARGCV_CXX_NIO_TCP_LISTEN_POOL_H_
