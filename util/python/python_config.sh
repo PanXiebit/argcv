@@ -133,13 +133,19 @@ function setup_python {
       set -- "${python_lib_path[@]}"
       echo "Please input the desired Python library path to use.  Default is ["$1"]"
 
-      # read b || true
-      if [[ -t "$fd" || -p /dev/stdin ]]
+      # # read b || true
+      # if [[ -t "$fd" || -p /dev/stdin ]]
+      # then
+      #   read b || true
+      # else
+      #   "Since you are in non-interactive mode, directly set as ''"
+      #   b=""
+      # fi
+      if [[ $DEBIAN_FRONTEND == "noninteractive" ]]
       then
-        read b || true
-      else
-        "Since you are in non-interactive mode, directly set as ''"
         b=""
+      else
+        read b || true
       fi
 
       if [ "$b" == "" ]; then

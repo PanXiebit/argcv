@@ -8,7 +8,7 @@ before_install:
   - sudo apt-get update
   - sudo apt-get install python3
   # bazel
-  - pwd # check current dir
+  - pwd # check current dir, result: /home/travis/build/yuikns/argcv
   - echo $PATH
   - wget https://github.com/bazelbuild/bazel/releases/download/0.4.5/bazel-0.4.5-installer-linux-x86_64.sh -O bazel-installer.sh
   - chmod +x bazel-installer.sh
@@ -17,9 +17,9 @@ before_install:
   # numpy
   - wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh
   - chmod +x miniconda.sh
-  - ./miniconda.sh -b # require: bzip2, tar  command with path: ./miniconda.sh -b -p /home/travis/mc
+  - ./miniconda.sh -b -p /home/travis/mc # require: bzip2, tar  command with path: ./miniconda.sh -b -p /home/travis/mc
   - rm -rf miniconda.sh
-  - export PATH=`pwd`/miniconda3/bin:$PATH
+  - export PATH=/home/travis/mc/bin:$PATH
   - conda install --yes numpy # current is 1.12.1-py36_0
 
 script:
