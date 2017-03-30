@@ -30,9 +30,9 @@
 extern "C" {
 #endif  //
 
-extern int max_fd;
-extern char proj_work_dir[1024];
-extern int daemon_proc;  // defined in error.c ?
+extern int kDaemonMaxFD;
+extern char kDaemonWorkDir[1024];
+extern int kDaemonStatus;  // defined in error.c ?
 
 int daemon_init(const char* ident);
 void daemon_destroy();

@@ -201,6 +201,9 @@
 #    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
+
+# deps:
+# find  .  -type f | xargs cat | grep "include" | grep boost | cut -d ' ' -f 2 | grep boost | uniq | cut -d '<' -f 2| cut -d '>' -f 1  | cut -d '/' -f 2 | cut -d '.' -f 1 | sort | uniq
 load("@//bazel:boost.bzl", "boost_library")
 
 boost_library(
@@ -326,6 +329,7 @@ boost_library(
   name = "detail",
   deps = [
     ":limits",
+    ":config",
   ],
 )
 
@@ -504,7 +508,7 @@ boost_library(
 
 boost_library(
   name = "predef",
-)
+)c
 
 boost_library(
   name = "preprocessor",
@@ -513,8 +517,25 @@ boost_library(
 boost_library(
   name = "range",
   deps = [
+    ":array",
+    ":assert",
     ":concept_check",
+    ":config",
+    ":cstdint",
+    ":detail",
+    ":functional",
+    ":iterator",
+    ":mpl",
+    ":noncopyable",
     ":optional",
+    ":preprocessor",
+    ":range",
+    ":ref",
+    ":regex",
+    ":static_assert",
+    ":tuple",
+    ":type_traits",
+    ":utility",
   ]
 )
 

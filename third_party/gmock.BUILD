@@ -23,14 +23,30 @@ cc_library(
         "googletest",
         "googletest/include",
     ],
-    linkopts = ["-pthread"],
+    copts = [
+      "-Wno-deprecated-declarations",
+      "-Wno-unused-function",
+      "-Wno-unused-command-line-argument",
+    ],
+    linkopts = [
+      "-pthread",
+      "-Wno-unused-command-line-argument", # clang does not need pthread
+    ],
     visibility = ["//visibility:public"],
 )
 
 cc_library(
     name = "gtest_main",
     srcs = ["googlemock/src/gmock_main.cc"],
-    linkopts = ["-pthread"],
+    copts = [
+      "-Wno-deprecated-declarations",
+      "-Wno-unused-function",
+      "-Wno-unused-command-line-argument",
+    ],
+    linkopts = [
+      "-pthread",
+      "-Wno-unused-command-line-argument", # clang does not need pthread
+    ],
     visibility = ["//visibility:public"],
     deps = [":gtest"],
 )

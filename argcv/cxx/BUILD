@@ -24,8 +24,11 @@ licenses(["notice"])  # MIT
 
 package(default_visibility = ["//visibility:public"])
 
-cc_inc_library(
+cc_library(
   name = "gtest_ext",
+  # srcs = [
+  #   "empty.cc",
+  # ],
   hdrs = [
     "test/gtest_ext.h"
   ],
@@ -86,6 +89,9 @@ cc_test(
     "concurrent/*_test.cc",
     "concurrent/*_test.h",
   ]),
+  copts = [
+    "-Wno-unused-function",
+  ],
   deps = [
     "//external:glog",
     "//external:gtest_main",

@@ -27,7 +27,7 @@ package(default_visibility = ["//visibility:public"])
 cc_library(
     name = "argcv",
     # srcs = [
-    #   "empty.cc",
+    #   "cxx/empty.cc",
     # ],
     deps = [
       "//argcv/c:argcv_sys",
@@ -38,7 +38,7 @@ cc_library(
 cc_library(
     name = "argcv_cc",
     # srcs = [
-    #   "empty.cc",
+    #   "cxx/empty.cc",
     # ],
     deps = [
       ":argcv",

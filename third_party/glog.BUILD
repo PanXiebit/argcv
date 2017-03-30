@@ -42,9 +42,14 @@ cc_library(
     copts = [
         "-D_XOPEN_SOURCE",
         # "-Ithird_party/glog/src",
+        "-Wno-deprecated-declarations",
+        "-Wno-unused-function",
+        "-Wno-unused-command-line-argument",
+        "-Wno-sign-compare",
     ],
     linkopts = [
-        "-lpthread",
+      "-pthread",
+      "-Wno-unused-command-line-argument", # clang does not need pthread
     ],
     includes = [
         "include",

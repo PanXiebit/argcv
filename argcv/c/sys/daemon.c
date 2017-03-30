@@ -25,15 +25,16 @@
  **/
 #include "argcv/c/sys/daemon.h"
 
+// #include <assert.h>
 #include <fcntl.h>     // open
 #include <signal.h>    // signal
 #include <sys/stat.h>  // open O_RDONL
 #include <syslog.h>    // syslog
 #include <unistd.h>    // setsid
 
-int daemon_proc = 0;  // for err_XXX() functions
-char proj_work_dir[1024] = "/";
-int max_fd = 64;
+int kDaemonStatus = 0;  // for err_XXX() functions
+char kDaemonWorkDir[1024] = "/";
+int kDaemonMaxFD = 64;
 
 int daemon_init(const char* ident) {
   openlog(ident, LOG_PID, LOG_USER);
@@ -61,14 +62,18 @@ int daemon_init(const char* ident) {
     _exit(0);
   }
   // child 2 continues ...
-  daemon_proc = 1;  // for err_XXX() functions
+  kDaemonStatus = 1;  // for err_XXX() functions
 
-  syslog(LOG_INFO, "chdir: %s\n", proj_work_dir);
+  syslog(LOG_INFO, "chdir: %s\n", kDaemonWorkDir);
 
-  chdir(proj_work_dir);
+  int status_chdir = chdir(kDaemonWorkDir);
+  // assert(status_chdir == 0);
+  if (0 != status_chdir) {
+    return status_chdir;
+  }
 
   // close off file descriptors
-  for (i = 0; i < max_fd; i++) {
+  for (i = 0; i < kDaemonMaxFD; i++) {
     close(i);
   }
 
