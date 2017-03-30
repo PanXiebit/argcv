@@ -1,19 +1,34 @@
+dist: trusty
+
 language:
   - java
   - c++
   - python
+
 jdk:
   - oraclejdk8  # Building Bazel requires JDK8.
+
+addons:
+  apt:
+    sources:
+      - ubuntu-toolchain-r-test
+    packages:
+      - wget
+      - pkg-config
+
+
 before_install:
   - sudo apt-get update
   - sudo apt-get install python3
   # bazel
   - pwd # check current dir, result: /home/travis/build/yuikns/argcv
   - echo $PATH
-  - wget https://github.com/bazelbuild/bazel/releases/download/0.4.5/bazel-0.4.5-installer-linux-x86_64.sh -O bazel-installer.sh
-  - chmod +x bazel-installer.sh
-  - sudo ./bazel-installer.sh # require javac
-  - sudo rm -rf bazel-installer.sh
+  # - wget https://github.com/bazelbuild/bazel/releases/download/0.4.5/bazel-0.4.5-installer-linux-x86_64.sh -O bazel-installer.sh
+  # - chmod +x bazel-installer.sh
+  # - sudo ./bazel-installer.sh # require javac
+  # - sudo rm -rf bazel-installer.sh
+  - wget https://github.com/bazelbuild/bazel/releases/download/0.4.5/bazel_0.4.5-linux-x86_64.deb
+  - sudo dpkg -i bazel_0.4.5-linux-x86_64.deb
   # numpy
   - wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh
   - chmod +x miniconda.sh
