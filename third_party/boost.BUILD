@@ -209,8 +209,24 @@ load("@//bazel:boost.bzl", "boost_library")
 boost_library(
   name = "algorithm",
   deps = [
+    ":array",
+    ":assert",
+    ":bind",
+    ":concept_check",
+    ":config",
+    ":detail",
+    ":exception",
     ":function",
+    ":iterator",
+    ":mpl",
     ":range",
+    ":ref",
+    ":regex",
+    ":static_assert",
+    ":throw_exception",
+    ":tuple",
+    ":type_traits",
+    ":utility",
   ],
 )
 
@@ -508,7 +524,7 @@ boost_library(
 
 boost_library(
   name = "predef",
-)c
+)
 
 boost_library(
   name = "preprocessor",
@@ -529,7 +545,6 @@ boost_library(
     ":noncopyable",
     ":optional",
     ":preprocessor",
-    ":range",
     ":ref",
     ":regex",
     ":static_assert",
