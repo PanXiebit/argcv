@@ -302,19 +302,49 @@ def argcv_deps():
       actual = "@zlib_archive//:zlib",
   )
   
+  # native.new_http_archive(
+  #     name = "gflags_archive",
+  #     build_file = str(Label("//third_party:gflags.BUILD")), # Use Customized Build File
+  #     sha256 = "659de3fab5ba5a0376e3c2da333e4ecec9c8a4b41709861765e28e02dd562f7a",
+  #     strip_prefix = "gflags-cce68f0c9c5d054017425e6e6fd54f696d36e8ee",
+  #     url = "https://github.com/gflags/gflags/archive/cce68f0c9c5d054017425e6e6fd54f696d36e8ee.zip",
+  # )
+  #
+  # native.bind(
+  #   name = "gflags",
+  #   actual = "@gflags_archive//:gflags",
+  # )
+
+  # from https://gflags.github.io/gflags/ , doesn't work for current glog
+  # native.git_repository(
+  #     name   = "com_github_gflags_gflags",
+  #     commit = "f8a0efe03aa69b3336d8e228b37d4ccb17324b88", # v2.2.0
+  #     remote = "https://github.com/gflags/gflags.git",
+  # )
+  #
+  # native.bind(
+  #     name = "gflags",
+  #     actual = "@com_github_gflags_gflags//:gflags",
+  # )
+  #
+  # native.bind(
+  #     name = "gflags_nothreads",
+  #     actual = "@com_github_gflags_gflags//:gflags_nothreads",
+  # )
+
   native.new_http_archive(
       name = "gflags_archive",
       build_file = str(Label("//third_party:gflags.BUILD")), # Use Customized Build File
-      sha256 = "659de3fab5ba5a0376e3c2da333e4ecec9c8a4b41709861765e28e02dd562f7a",
-      strip_prefix = "gflags-cce68f0c9c5d054017425e6e6fd54f696d36e8ee",
-      url = "https://github.com/gflags/gflags/archive/cce68f0c9c5d054017425e6e6fd54f696d36e8ee.zip",
+      sha256 = "99f9e8b63ea53e4b23f0fd0f68a6f1e397d5512be36716c17cc75966a90f0d57",
+      strip_prefix = "gflags-2.2.0",
+      url = "https://github.com/gflags/gflags/archive/v2.2.0.zip",
   )
-  
+
   native.bind(
     name = "gflags",
     actual = "@gflags_archive//:gflags",
   )
-  
+
   native.new_local_repository(
     name = "glog_config",
     path = "third_party/glog",

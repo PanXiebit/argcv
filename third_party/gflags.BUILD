@@ -68,7 +68,9 @@ genrule(
         "src/gflags_completions.h.in",
     ],
     outs = [
-        "src/gflags_completions.h",
+        # note: this change is for new gflags v2.2.0
+        # "src/gflags_completions.h",
+        "gflags/gflags_completions.h",
     ],
     cmd = "awk '{ gsub(/@GFLAGS_NAMESPACE@/, \"gflags\"); print; }' $(<) > $(@)",
 )
