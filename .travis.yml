@@ -13,8 +13,15 @@ language:
   - c++
   - python
 
-jdk:
-  - oraclejdk8  # Building Bazel requires JDK8.
+
+# JDK configuration, ref: https://github.com/travis-ci/travis-ci/issues/2316
+matrix:
+  include:
+    - os: linux
+      jdk: oraclejdk8  # Building Bazel requires JDK8.
+    - os: osx
+      osx_image: xcode8  # Building Bazel requires JDK8.
+
 
 # addons:
 #   apt:
