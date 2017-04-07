@@ -48,8 +48,11 @@ before_install:
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo dpkg -i bazel_0.4.5-linux-x86_64.deb                                                     ; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install bazel                                                                              ; fi
   # numpy
-  - wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh    ; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then wget https://repo.continuum.io/miniconda/Miniconda3-latest-MacOSX-x86_64.sh -O miniconda.sh     ; fi
   - chmod +x miniconda.sh
+  # bugfix: ./miniconda.sh: line 233: md5sum: command not found
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install md5sha1sum                                                                          ; fi
   - ./miniconda.sh -b -p $HOME/mc # require: bzip2, tar  command with path: ./miniconda.sh -b -p /home/travis/mc
   - rm -rf miniconda.sh
   - export PATH=$HOME/mc/bin:$PATH
