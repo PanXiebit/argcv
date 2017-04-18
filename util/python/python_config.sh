@@ -141,7 +141,7 @@ function setup_python {
       #   "Since you are in non-interactive mode, directly set as ''"
       #   b=""
       # fi
-      if [[ $DEBIAN_FRONTEND == "noninteractive" ]]
+      if [[ ( $DEBIAN_FRONTEND == "noninteractive" ) || ( $DOCKER_FRONTEND == "noninteractive" ) ]]
       then
         b=""
       else
