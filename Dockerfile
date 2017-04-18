@@ -35,7 +35,7 @@ RUN conda install --yes numpy
 
 # setup
 ENV DOCKER_FRONTEND "noninteractive"
-RUN cd /app && ./setup
+RUN cd /app && ./setup && bazel build //...
 
 
 # expose 22, and start sshd in default
