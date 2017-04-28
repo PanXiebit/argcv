@@ -133,7 +133,7 @@
 #define HAVE___SYNC_VAL_COMPARE_AND_SWAP 1
 
 /* Define to the sub-directory in which libtool stores uninstalled libraries.
-   */
+ */
 #define LT_OBJDIR ".libs/"
 
 /* Name of package */

@@ -4,6 +4,8 @@
 #
 # TODO(mrry): Upstream these fixes back to the gRPC repository.
 # TODO(jart): Fix nanopb's BUILD file. Fix grpc BUILD file.
+# NOTE(yu): Removed "-std=gnu99", in copts, because of error: invalid argument in mac
+# NOTE(yu): add "include/grpc++/impl/codegen/config_protobuf.h" in grpc++
 
 # GRPC Bazel BUILD file.
 # This currently builds C, C++ and Objective-C code.
@@ -554,7 +556,9 @@ cc_library(
         "include/grpc/status.h",
     ],
     copts = [
-        "-std=gnu99",
+        # "-Wunused-const-variable",
+        # error: invalid argument '-std=gnu99' not allowed with 'C++/ObjC++'
+        # "-std=gnu99",
     ],
     includes = [
         ".",
@@ -1241,7 +1245,9 @@ cc_library(
         "include/grpc/status.h",
     ],
     copts = [
-        "-std=gnu99",
+        # "-Wunused-const-variable",
+        # error: invalid argument '-std=gnu99' not allowed with 'C++/ObjC++'
+        # "-std=gnu99",
     ],
     includes = [
         ".",
@@ -1485,6 +1491,7 @@ cc_library(
         "include/grpc++/impl/codegen/completion_queue.h",
         "include/grpc++/impl/codegen/completion_queue_tag.h",
         "include/grpc++/impl/codegen/config.h",
+        "include/grpc++/impl/codegen/config_protobuf.h",
         "include/grpc++/impl/codegen/core_codegen.h",
         "include/grpc++/impl/codegen/core_codegen_interface.h",
         "include/grpc++/impl/codegen/create_auth_context.h",
@@ -1572,7 +1579,9 @@ cc_library(
         "include/grpc/status.h",
     ],
     copts = [
-        "-std=gnu99",
+        # "-Wunused-const-variable",
+        # error: invalid argument '-std=gnu99' not allowed with 'C++/ObjC++'
+        # "-std=gnu99",
     ],
     includes = [
         ".",

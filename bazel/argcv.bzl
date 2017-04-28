@@ -228,6 +228,35 @@ def argcv_deps():
       name = "protobuf_compiler",
       actual = "@protobuf//:protoc_lib",
   )
+  
+  native.bind(
+      name = "protoc",
+      actual = "@protobuf//:protoc",
+  )
+
+  # It is requreid by grpc
+  # We need to import the protobuf library under the names com_google_protobuf
+  # and com_google_protobuf_cc to enable proto_library support in bazel.
+  # Unfortunately there is no way to alias http_archives at the moment.
+  native.http_archive(
+      name = "com_google_protobuf",
+      urls = [
+          "http://bazel-mirror.storage.googleapis.com/github.com/google/protobuf/archive/2b7430d96aeff2bb624c8d52182ff5e4b9f7f18a.tar.gz",
+          "https://github.com/google/protobuf/archive/2b7430d96aeff2bb624c8d52182ff5e4b9f7f18a.tar.gz",
+      ],
+      sha256 = "e5d3d4e227a0f7afb8745df049bbd4d55474b158ca5aaa2a0e31099af24be1d0",
+      strip_prefix = "protobuf-2b7430d96aeff2bb624c8d52182ff5e4b9f7f18a",
+  )
+
+  native.http_archive(
+      name = "com_google_protobuf_cc",
+      urls = [
+          "http://bazel-mirror.storage.googleapis.com/github.com/google/protobuf/archive/2b7430d96aeff2bb624c8d52182ff5e4b9f7f18a.tar.gz",
+          "https://github.com/google/protobuf/archive/2b7430d96aeff2bb624c8d52182ff5e4b9f7f18a.tar.gz",
+      ],
+      sha256 = "e5d3d4e227a0f7afb8745df049bbd4d55474b158ca5aaa2a0e31099af24be1d0",
+      strip_prefix = "protobuf-2b7430d96aeff2bb624c8d52182ff5e4b9f7f18a",
+  )
 
   native.new_http_archive(
       name = "grpc",
@@ -251,7 +280,19 @@ def argcv_deps():
       name = "grpc_lib",
       actual = "@grpc//:grpc++_unsecure",
   )
+  
+  # GRPC C++ runtime library
+  native.bind(
+    name = "grpc++",
+    actual = "@grpc//:grpc++"
+  )
 
+  native.bind(
+    name = "grpc++_codegen_proto",
+    actual = "@grpc//:grpc++_codegen_proto"
+  )
+
+  # branch: master-with-bazel
   native.http_archive(
       name = "boringssl",
       urls = [
@@ -260,6 +301,16 @@ def argcv_deps():
       ],
       sha256 = "025264d6e9a7ad371f2f66d17a28b6627de0c9592dc2eb54afd062f68f1f9aa3",
       strip_prefix = "boringssl-bbcaa15b0647816b9a1a9b9e0d209cd6712f0105",
+  )
+  
+  native.bind(
+    name = "libssl",
+    actual = "@boringssl//:ssl"
+  )
+  
+  native.bind(
+    name = "libssl_objc",
+    actual = "@boringssl//:libssl_objc"
   )
 
   # Protocol Buffers with small code size https://jpa.kapsi.fi/nanopb/

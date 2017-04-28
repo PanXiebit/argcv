@@ -40,11 +40,10 @@ int is_western_space(char ch) {
 int is_western_punct(char ch) {
   // see if it is either a space, control character,
   // or alphanumeric and negate that
-  return ch > 0 &&
-         !(((ch >= 0x30 /*'0'*/) && (ch <= 0x39 /*'9'*/)) ||
-           ((ch >= 0x41 /*'A'*/) && (ch <= 0x5A /*'Z'*/)) ||
-           ((ch >= 0x61 /*'a'*/) && (ch <= 0x7A /*'z'*/)) ||
-           ((ch >= 0x00) && (ch <= 0x20)));
+  return ch > 0 && !(((ch >= 0x30 /*'0'*/) && (ch <= 0x39 /*'9'*/)) ||
+                     ((ch >= 0x41 /*'A'*/) && (ch <= 0x5A /*'Z'*/)) ||
+                     ((ch >= 0x61 /*'a'*/) && (ch <= 0x7A /*'z'*/)) ||
+                     ((ch >= 0x00) && (ch <= 0x20)));
 }
 
 int is_western_hyphen(char ch) { return ch == 0x2D; }
