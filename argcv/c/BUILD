@@ -43,6 +43,9 @@ cc_library(
           "sys/*_test.h",
         ],
     ),
+    copts = [
+      "-D_POSIX_C_SOURCE",
+    ],
     visibility = ["//visibility:public"],
 )
 
