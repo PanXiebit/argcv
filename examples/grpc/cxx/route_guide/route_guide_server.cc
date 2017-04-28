@@ -43,8 +43,14 @@
 #include <grpc++/server_builder.h>
 #include <grpc++/server_context.h>
 #include <grpc/grpc.h>
+
 #include "helper.h"
+
+#ifdef BAZEL_BUILD
+#include "examples/grpc/protos/route_guide.grpc.pb.h"
+#else
 #include "route_guide.grpc.pb.h"
+#endif
 
 using grpc::Server;
 using grpc::ServerBuilder;

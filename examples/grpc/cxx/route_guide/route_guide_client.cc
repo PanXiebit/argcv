@@ -44,7 +44,14 @@
 #include <grpc++/security/credentials.h>
 #include <grpc/grpc.h>
 #include "helper.h"
+
+// #include "route_guide.grpc.pb.h"
+
+#ifdef BAZEL_BUILD
+#include "examples/grpc/protos/route_guide.grpc.pb.h"
+#else
 #include "route_guide.grpc.pb.h"
+#endif
 
 using grpc::Channel;
 using grpc::ClientContext;

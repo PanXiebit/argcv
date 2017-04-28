@@ -38,7 +38,13 @@
 #include <sstream>
 #include <string>
 #include <vector>
+// #include "route_guide.grpc.pb.h"
+
+#ifdef BAZEL_BUILD
+#include "examples/grpc/protos/route_guide.grpc.pb.h"
+#else
 #include "route_guide.grpc.pb.h"
+#endif
 
 namespace routeguide {
 
@@ -55,7 +61,8 @@ std::string GetDbFileContent(int argc, char** argv) {
       }
     }
   } else {
-    db_path = "route_guide_db.json";
+    // db_path = "route_guide_db.json";
+    db_path = "examples/grpc/cxx/route_guide/route_guide_db.json";
   }
   std::ifstream db_file(db_path);
   if (!db_file.is_open()) {

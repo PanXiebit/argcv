@@ -1,4 +1,5 @@
-build --show_timestamps  --verbose_failures
+# build --show_timestamps
+build --verbose_failures
 
 # build -c opt --copt=-std=c99 --cxxopt=-std=c++11
 build -c opt
