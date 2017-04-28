@@ -39,7 +39,12 @@
 #include <grpc++/grpc++.h>
 #include <grpc/support/log.h>
 
+// #include "helloworld.grpc.pb.h"
+#ifdef BAZEL_BUILD
+#include "examples/grpc/protos/helloworld.grpc.pb.h"
+#else
 #include "helloworld.grpc.pb.h"
+#endif
 
 using grpc::Server;
 using grpc::ServerAsyncResponseWriter;

@@ -37,6 +37,7 @@
 
 #include <grpc++/grpc++.h>
 
+// #include "helloworld.grpc.pb.h"
 #ifdef BAZEL_BUILD
 #include "examples/grpc/protos/helloworld.grpc.pb.h"
 #else

@@ -25,12 +25,13 @@ licenses(["notice"])  # MIT
 package(default_visibility = [
   "//app:__subpackages__",
   "//argcv:__subpackages__",
-  "//bazel:__subpackages__",
+  "//bazel:public",
   "//examples:__subpackages__",
   "//third_party:__subpackages__",
   "//tools:__subpackages__",
   "//util:__subpackages__",
 ])
+
 
 # Note:  rules, please ref https://bazel.build/versions/master/docs/skylark/rules.html
 

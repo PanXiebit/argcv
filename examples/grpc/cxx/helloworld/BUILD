@@ -35,8 +35,29 @@ cc_binary(
 )
 
 cc_binary(
+    name = "greeter_async_client",
+    srcs = ["greeter_async_client.cc"],
+    deps = ["//examples/grpc/protos:helloworld"],
+    defines = ["BAZEL_BUILD"],
+)
+
+cc_binary(
+    name = "greeter_async_client2",
+    srcs = ["greeter_async_client2.cc"],
+    deps = ["//examples/grpc/protos:helloworld"],
+    defines = ["BAZEL_BUILD"],
+)
+
+cc_binary(
     name = "greeter_server",
     srcs = ["greeter_server.cc"],
+    deps = ["//examples/grpc/protos:helloworld"],
+    defines = ["BAZEL_BUILD"],
+)
+
+cc_binary(
+    name = "greeter_async_server",
+    srcs = ["greeter_async_server.cc"],
     deps = ["//examples/grpc/protos:helloworld"],
     defines = ["BAZEL_BUILD"],
 )
