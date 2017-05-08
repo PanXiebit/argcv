@@ -1,9 +1,10 @@
 dist: trusty
 sudo: required
 
+# temp disable cache
 cache:
   directories:
-    - $HOME/mc
+#    - $HOME/mc
 
 compiler:
   - gcc
