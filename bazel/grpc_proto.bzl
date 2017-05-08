@@ -152,7 +152,7 @@ def proto_library(name, src, deps=[],
     grpc_cpp_plugin = grpc_cpp_plugin)
 
   if generate_cc:
-    cc_deps = ["//external:protobuf_clib"]
+    cc_deps = ["//external:protobuf_compiler"]
     if has_service:
       cc_deps += ["//external:grpc++"]
     cc_deps += deps

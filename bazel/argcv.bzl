@@ -204,40 +204,12 @@ def argcv_deps():
       build_file = str(Label("//third_party:curl.BUILD")),
       repository = ""
   )
-  
-
-  # protobuf
-  native.http_archive(
-      name = "protobuf",
-      urls = [
-          "http://bazel-mirror.storage.googleapis.com/github.com/google/protobuf/archive/2b7430d96aeff2bb624c8d52182ff5e4b9f7f18a.tar.gz",
-          "https://github.com/google/protobuf/archive/2b7430d96aeff2bb624c8d52182ff5e4b9f7f18a.tar.gz",
-      ],
-      sha256 = "e5d3d4e227a0f7afb8745df049bbd4d55474b158ca5aaa2a0e31099af24be1d0",
-      strip_prefix = "protobuf-2b7430d96aeff2bb624c8d52182ff5e4b9f7f18a",
-  )
-
-  # grpc expects //external:protobuf_clib and //external:protobuf_compiler
-  # to point to the protobuf's compiler library.
-  native.bind(
-      name = "protobuf_clib",
-      actual = "@protobuf//:protoc_lib",
-  )
-
-  native.bind(
-      name = "protobuf_compiler",
-      actual = "@protobuf//:protoc_lib",
-  )
-  
-  native.bind(
-      name = "protoc",
-      actual = "@protobuf//:protoc",
-  )
 
   # It is requreid by grpc
   # We need to import the protobuf library under the names com_google_protobuf
   # and com_google_protobuf_cc to enable proto_library support in bazel.
   # Unfortunately there is no way to alias http_archives at the moment.
+  # update note: I have already removed related deps
   native.http_archive(
       name = "com_google_protobuf",
       urls = [
@@ -248,15 +220,35 @@ def argcv_deps():
       strip_prefix = "protobuf-2b7430d96aeff2bb624c8d52182ff5e4b9f7f18a",
   )
 
-  native.http_archive(
-      name = "com_google_protobuf_cc",
-      urls = [
-          "http://bazel-mirror.storage.googleapis.com/github.com/google/protobuf/archive/2b7430d96aeff2bb624c8d52182ff5e4b9f7f18a.tar.gz",
-          "https://github.com/google/protobuf/archive/2b7430d96aeff2bb624c8d52182ff5e4b9f7f18a.tar.gz",
-      ],
-      sha256 = "e5d3d4e227a0f7afb8745df049bbd4d55474b158ca5aaa2a0e31099af24be1d0",
-      strip_prefix = "protobuf-2b7430d96aeff2bb624c8d52182ff5e4b9f7f18a",
+  # native.http_archive(
+  #     name = "com_google_protobuf_cc",
+  #     urls = [
+  #         "http://bazel-mirror.storage.googleapis.com/github.com/google/protobuf/archive/2b7430d96aeff2bb624c8d52182ff5e4b9f7f18a.tar.gz",
+  #         "https://github.com/google/protobuf/archive/2b7430d96aeff2bb624c8d52182ff5e4b9f7f18a.tar.gz",
+  #     ],
+  #     sha256 = "e5d3d4e227a0f7afb8745df049bbd4d55474b158ca5aaa2a0e31099af24be1d0",
+  #     strip_prefix = "protobuf-2b7430d96aeff2bb624c8d52182ff5e4b9f7f18a",
+  # )
+
+  # grpc expects //external:protobuf_clib and //external:protobuf_compiler
+  # to point to the protobuf's compiler library.
+  # note: update: use protobuf_compiler only
+  native.bind(
+      name = "protobuf_compiler",
+      actual = "@com_google_protobuf//:protoc_lib",
   )
+
+  native.bind(
+      name = "protobuf_clib",
+      actual = "@com_google_protobuf//:protoc_lib",
+  )
+
+  native.bind(
+      name = "protoc",
+      actual = "@com_google_protobuf//:protoc",
+  )
+  
+  # TODO protobuf_java, protobuf_java_util etc.
 
   native.new_http_archive(
       name = "grpc",
@@ -414,12 +406,12 @@ def argcv_deps():
     name = "glog",
     actual = "@glog_archive//:glog",
   )
-  
+
   # # based on https://github.com/nelhage/rules_boost
   native.new_http_archive(
     name = "boost",
-    # url = "https://nelhage.s3.amazonaws.com/rules_boost/boost_1_63_0.tar.bz2",
-    url = "https://doc.argcv.com/repo/bazel/boost_1_63_0.tar.bz2",
+    url = "https://nelhage.s3.amazonaws.com/rules_boost/boost_1_63_0.tar.bz2",
+    # url = "https://doc.argcv.com/repo/bazel/boost_1_63_0.tar.bz2",
     build_file = "third_party/boost.BUILD",  #str(Label("//third_party:boost.BUILD")),
     strip_prefix = "boost_1_63_0/",
     sha256 = "beae2529f759f6b3bf3f4969a19c2e9d6f0c503edcb2de4a61d1428519fcb3b0",
