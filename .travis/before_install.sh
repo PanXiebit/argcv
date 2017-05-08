@@ -9,7 +9,8 @@ if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
   sudo dpkg -i bazel_0.4.5-linux-x86_64.deb
 
   # download miniconda if not exists
-  [ ! -d $HOME/mc ] && wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh
+  # [ ! -d $HOME/mc ] && wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh
+  wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh
 fi
 
 if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
@@ -21,14 +22,17 @@ if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
   brew install bazel md5sha1sum
 
   # download if not exists
-  [ ! -d $HOME/mc ] && wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh
+  # [ ! -d $HOME/mc ] && wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh
+  wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh
 fi
 
-if [ -f miniconda.sh ]; then
+# install miniconda
+#if [ -f miniconda.sh ]; then
   echo "install miniconda"
+  chmod +x miniconda.sh
   ./miniconda.sh -b -p $HOME/mc
   rm -rf miniconda.sh
-fi
+#fi
 
 export PATH=$HOME/mc/bin:$PATH
 
