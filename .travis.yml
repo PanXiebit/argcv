@@ -22,9 +22,12 @@ matrix:
   include:
     - os: linux
       jdk: oraclejdk8  # Building Bazel requires JDK8.
+      env:
+        - CACHE_NAME=linux
     - os: osx
       osx_image: xcode8  # Building Bazel requires JDK8.
-
+      env:
+        - CACHE_NAME=osx
 
 # addons:
 #   apt:
@@ -34,15 +37,22 @@ matrix:
 #       - wget
 #       - pkg-config
 
-
 before_install:
   # debug
-  - pwd # check current dir, result: /home/travis/build/yuikns/argcv
   - . .travis/before_install.sh
+  - pwd # check current dir, result: /home/travis/build/yuikns/argcv
+  - echo $PATH
+  - df -h
+  - date
+  - uname -a
+  - python -v
+
+install:
+  - . .travis/install.sh
   - echo $PATH
 
 script:
   # setup python
   - ./setup
-  - bazel build //...
+  # - bazel build //...
   - bazel test //...
