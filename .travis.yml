@@ -45,7 +45,7 @@ before_install:
   - df -h
   - date
   - uname -a
-  - python -v
+  # - python -v
 
 install:
   - . .travis/install.sh
