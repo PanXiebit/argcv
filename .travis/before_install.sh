@@ -10,7 +10,8 @@ if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
 
   # download miniconda if not exists
   # [ ! -d $HOME/mc ] && wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh
-  wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh
+  [ ! -f $HOME/mc/bin/conda ] && wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh
+  # wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh
 fi
 
 if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
@@ -22,18 +23,18 @@ if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
   brew install bazel md5sha1sum
 
   # download if not exists
-  # [ ! -d $HOME/mc ] && wget https://repo.continuum.io/miniconda/Miniconda3-latest-MacOSX-x86_64.sh -O miniconda.sh
-  wget https://repo.continuum.io/miniconda/Miniconda3-latest-MacOSX-x86_64.sh -O miniconda.sh
+  [ ! -f $HOME/mc/bin/conda ] && wget https://repo.continuum.io/miniconda/Miniconda3-latest-MacOSX-x86_64.sh -O miniconda.sh
+  # wget https://repo.continuum.io/miniconda/Miniconda3-latest-MacOSX-x86_64.sh -O miniconda.sh
 fi
 
 # install miniconda
-#if [ -f miniconda.sh ]; then
+if [ -f miniconda.sh ]; then
   echo "install miniconda"
   chmod +x miniconda.sh
   rm -rf $HOME/mc # ERROR: File or directory already exists: /home/travis/mc
   ./miniconda.sh -b -p $HOME/mc
   rm -rf miniconda.sh
-#fi
+fi
 
 export PATH=$HOME/mc/bin:$PATH
 
