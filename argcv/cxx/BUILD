@@ -37,6 +37,7 @@ cc_library(
   ],
 )
 
+
 cc_library(
   name = "argcv_concurrent",
   srcs = glob(
@@ -58,6 +59,22 @@ cc_library(
   )
 )
 
+cc_test(
+  name = "argcv_concurrent_test",
+  srcs = glob([
+    "concurrent/*_test.cc",
+    "concurrent/*_test.h",
+  ]),
+  copts = [
+    "-Wno-unused-function",
+  ],
+  deps = [
+    "//external:glog",
+    "//external:gtest_main",
+    ":argcv_concurrent",
+    ":gtest_ext",
+  ],
+)
 
 cc_library(
   name = "argcv_nio",
@@ -84,23 +101,6 @@ cc_library(
 )
 
 cc_test(
-  name = "argcv_concurrent_test",
-  srcs = glob([
-    "concurrent/*_test.cc",
-    "concurrent/*_test.h",
-  ]),
-  copts = [
-    "-Wno-unused-function",
-  ],
-  deps = [
-    "//external:glog",
-    "//external:gtest_main",
-    ":argcv_concurrent",
-    ":gtest_ext",
-  ],
-)
-
-cc_test(
   name = "argcv_nio_test",
   srcs = glob([
     "nio/*_test.cc",
@@ -113,3 +113,52 @@ cc_test(
     # ":gtest_ext",
   ],
 )
+
+cc_library(
+  name = "argcv_random",
+  hdrs = [
+    "random/random.h"
+  ],
+)
+
+cc_library(
+  name = "argcv_str",
+  srcs = glob(
+    [
+      "str/*.c",
+      "str/*.cc",
+    ],
+    exclude = [
+      "str/*_test.cc",
+    ],
+  ),
+  hdrs = glob(
+    [
+      "str/*.h",
+    ],
+    exclude = [
+      "str/*_test.h",
+    ],
+  ),
+  deps = [
+    "//external:glog",
+    ":argcv_random",
+    "//third_party/porter2_stemmer:porter2_stemmer"
+  ],
+)
+
+cc_test(
+  name = "argcv_str_test",
+  srcs = glob([
+    "str/*_test.cc",
+    "str/*_test.h",
+  ]),
+  deps = [
+    "//external:glog",
+    "//external:gtest_main",
+    ":argcv_str",
+    # ":gtest_ext",
+  ],
+)
+
+
