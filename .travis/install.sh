@@ -8,6 +8,10 @@ if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
   wget https://github.com/bazelbuild/bazel/releases/download/0.4.5/bazel_0.4.5-linux-x86_64.deb
   sudo dpkg -i bazel_0.4.5-linux-x86_64.deb
 
+  # Error: corrupt installation: file '/home/travis/.cache/bazel/_bazel_travis/install/xxx/_embedded_binaries/client' missing. 
+  # Please remove '/home/travis/.cache/bazel/_bazel_travis/install/xx' and try again.
+  rm -rf $HOME/.cache/bazel/_bazel_travis/install/
+
   # download miniconda if not exists
   # [ ! -d $HOME/mc ] && wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh
   [ ! -f $HOME/mc/bin/conda ] && wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh
