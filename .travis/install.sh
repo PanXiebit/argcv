@@ -26,6 +26,10 @@ if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
   # md5sha1sum is for mc
   brew install bazel md5sha1sum
 
+  # Error: corrupt installation: file '/home/travis/.cache/bazel/_bazel_travis/install/xxx/_embedded_binaries/client' missing. 
+  # Please remove '/home/travis/.cache/bazel/_bazel_travis/install/xx' and try again.
+  rm -rf $HOME/.cache/bazel/_bazel_travis/install/
+
   # download if not exists
   [ ! -f $HOME/mc/bin/conda ] && wget https://repo.continuum.io/miniconda/Miniconda3-latest-MacOSX-x86_64.sh -O miniconda.sh
   # wget https://repo.continuum.io/miniconda/Miniconda3-latest-MacOSX-x86_64.sh -O miniconda.sh
