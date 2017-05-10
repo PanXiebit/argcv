@@ -124,7 +124,8 @@ std::vector<T> as_vec(const std::string s, size_t offset = 0) {
   size_t sz = (s.size() - offset) / tsz;
   for (size_t ix = 0; ix < sz; ix++) {
     T tv;
-    memcpy(&tv, (reinterpret_cast<const char *>(s.data())) + ix * tsz + offset, tsz);
+    memcpy(&tv, (reinterpret_cast<const char *>(s.data())) + ix * tsz + offset,
+           tsz);
     v.push_back(tv);
   }
   return v;
@@ -160,6 +161,27 @@ inline std::vector<std::string> utf8split(const std::string &s) {
     }
   }
   return elems;
+}
+
+/**
+ * load a whole file to string
+ *
+ */
+inline std::string load(const std::string &name) {
+  FILE *fp = fopen(name.c_str(), "rb");
+  size_t sz;
+  int i;
+  char *buff;
+  fseek(fp, 0, SEEK_END);
+  sz = ftell(fp);
+  fseek(fp, 0, SEEK_SET);
+  buff = (char *)malloc(sizeof(char) * (sz + 1));
+  buff[sz] = '\0';
+  fread(buff, sz, 1, fp);
+  std::string rtstr(buff, sz);
+  free(buff);
+  fclose(fp);
+  return rtstr;
 }
 
 }  // namespace str
