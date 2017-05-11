@@ -27,6 +27,7 @@
 #define ARGCV_CXX_STR_STR_H_
 
 #include <cstring>
+#include <cstdlib>
 
 #include <algorithm>
 #include <string>
