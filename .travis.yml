@@ -55,5 +55,9 @@ script:
   # setup python
   - ./setup
   - bazel fetch //...
+  # build by stage for cache
+  - bazel build examples/cxx:hello_world
+  - bazel build examples/grpc/protos:helloworld
+  - bazel build examples/grpc/cxx/helloworld:greeter_async_server
   - bazel build //...
   - bazel test //...
