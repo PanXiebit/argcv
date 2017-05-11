@@ -170,7 +170,6 @@ inline std::vector<std::string> utf8split(const std::string &s) {
 inline std::string load(const std::string &name) {
   FILE *fp = fopen(name.c_str(), "rb");
   size_t sz;
-  int i;
   char *buff;
   fseek(fp, 0, SEEK_END);
   sz = ftell(fp);
