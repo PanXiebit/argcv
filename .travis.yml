@@ -5,7 +5,7 @@ sudo: required
 cache:
   directories:
    - $HOME/mc
-   - $HOME/.cache
+   - $HOME/.cache/bazel
 
 compiler:
   - gcc

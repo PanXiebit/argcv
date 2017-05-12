@@ -44,7 +44,7 @@ cc_library(
         ],
     ),
     copts = [
-      "-D_POSIX_C_SOURCE",
+      #"-D_POSIX_C_SOURCE",
       # "-std=gnu99",
     ],
     visibility = ["//visibility:public"],
