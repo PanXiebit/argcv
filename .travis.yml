@@ -7,6 +7,10 @@ cache:
    - $HOME/mc
    - $HOME/.cache/bazel
 
+before_cache:
+  - rm -f bazel-*
+  - rm -rf $HOME/.cache/bazel/_bazel_travis/install
+
 compiler:
   - gcc
   - clang
@@ -25,7 +29,7 @@ matrix:
       env:
         - CACHE_NAME=linux
     - os: osx
-      osx_image: xcode8  # Building Bazel requires JDK8.
+      osx_image: xcode8.3  # Building Bazel requires JDK8.
       env:
         - CACHE_NAME=osx
 
@@ -50,14 +54,15 @@ before_install:
 install:
   - . .travis/install.sh
   - echo $PATH
-
-script:
   # setup python
   - ./setup
   - bazel fetch //...
+
+script:
   # build by stage for cache
   - bazel build examples/cxx:hello_world
   - bazel build examples/grpc/protos:helloworld
   - bazel build examples/grpc/cxx/helloworld:greeter_async_server
   - bazel build //...
   - bazel test //...
+
