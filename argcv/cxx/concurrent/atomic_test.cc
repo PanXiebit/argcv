@@ -34,16 +34,16 @@ using namespace argcv::concurrent;  // NOLINT(build/namespaces)
 
 TEST(atomic, plus_one) {
   atomic<uint32_t> apple(0);
-  EXPECT_EQ(0, atomic_fetch_add<uint32_t>(&apple, 1));
-  EXPECT_EQ(1, atomic_fetch_add<uint32_t>(&apple, 1));
-  EXPECT_EQ(2, atomic_fetch_add<uint32_t>(&apple, 1));
-  printf("score: %u", atomic_fetch_add<uint32_t>(&apple, 1));
+  EXPECT_EQ(0, AtomicFetchAdd<uint32_t>(&apple, 1));
+  EXPECT_EQ(1, AtomicFetchAdd<uint32_t>(&apple, 1));
+  EXPECT_EQ(2, AtomicFetchAdd<uint32_t>(&apple, 1));
+  printf("score: %u", AtomicFetchAdd<uint32_t>(&apple, 1));
 }
 
 TEST(ticket_lock, basic_test) {
   TicketLock tl;
-  ASSERT_USECS(10, tl.lock());
-  ASSERT_USECS(10, tl.unlock());
-  ASSERT_USECS(10, tl.lock());
-  ASSERT_USECS(10, tl.unlock());
+  ASSERT_USECS(10, tl.Lock());
+  ASSERT_USECS(10, tl.Unlock());
+  ASSERT_USECS(10, tl.Lock());
+  ASSERT_USECS(10, tl.Unlock());
 }

@@ -37,58 +37,58 @@ template <typename T>
 using atomic = std::atomic<T>;  // typedef std::atomic<T> as atomic<T>
 
 template <typename T>
-T* atomic_fetch_add(atomic<T*>* obj, std::ptrdiff_t arg) {
+T AtomicFetchAdd(atomic<T>* obj, T arg) {
   return obj->fetch_add(arg);
 }
 
 template <typename T>
-T* atomic_fetch_sub(atomic<T*>* obj, std::ptrdiff_t arg) {
+T AtomicFetchSub(atomic<T>* obj, T arg) {
   return obj->fetch_sub(arg);
 }
 
 template <typename T>
-T* atomic_fetch_or(atomic<T*>* obj, std::ptrdiff_t arg) {
+T AtomicFetchOr(atomic<T>* obj, T arg) {
   return obj->fetch_or(arg);
 }
 
 template <typename T>
-T* atomic_fetch_xor(atomic<T*>* obj, std::ptrdiff_t arg) {
+T AtomicFetchXor(atomic<T>* obj, T arg) {
   return obj->fetch_xor(arg);
 }
 
 class Spinlock {
  public:
   // ATOMIC_FLAG_INIT = {false}
-  Spinlock() : locked(false) {}
-  void lock() {
-    while (locked.test_and_set(std::memory_order_acquire)) {
+  Spinlock() : locked_(false) {}
+  void Lock() {
+    while (locked_.test_and_set(std::memory_order_acquire)) {
       // wait
       std::this_thread::yield();
     }
   }
-  bool try_lock() { return locked.test_and_set(std::memory_order_acquire); }
-  void unlock() { locked.clear(std::memory_order_release); }
+  bool TryLock() { return locked_.test_and_set(std::memory_order_acquire); }
+  void Unlock() { locked_.clear(std::memory_order_release); }
 
  private:
-  std::atomic_flag locked;
+  std::atomic_flag locked_;
 };
 
 class TicketLock {
  public:
   // ATOMIC_FLAG_INIT = {false}
-  TicketLock() : ticket(0), serve(0) {}
-  void lock() {
-    auto t = atomic_fetch_add<uint32_t>(&ticket, 1);
-    while (t != serve) {
+  TicketLock() : ticket_(0), serve_(0) {}
+  void Lock() {
+    auto t = AtomicFetchAdd<uint32_t>(&ticket_, 1);
+    while (t != serve_) {
       // wait
       std::this_thread::yield();
     }
   }
-  void unlock() { atomic_fetch_add<uint32_t>(&serve, 1); }
+  void Unlock() { AtomicFetchAdd<uint32_t>(&serve_, 1); }
 
  private:
-  atomic<uint32_t> ticket;
-  atomic<uint32_t> serve;
+  atomic<uint32_t> ticket_;
+  atomic<uint32_t> serve_;
 };
 
 }  // namespace concurrent

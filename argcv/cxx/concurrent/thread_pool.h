@@ -40,25 +40,25 @@ class ThreadPool {
  public:
   explicit ThreadPool(size_t);
   template <class F, class... Args>
-  auto enqueue(F&& f, Args&&... args)  // NOLINT(build/c++11)
+  auto Enqueue(F&& f, Args&&... args)  // NOLINT(build/c++11)
       -> std::future<typename std::result_of<F(Args...)>::type>;
   ~ThreadPool();
 
  private:
   // need to keep track of threads so we can join them
-  std::vector<std::thread> workers;
+  std::vector<std::thread> workers_;
   // the task queue
-  std::queue<std::function<void()>> tasks;
+  std::queue<std::function<void()>> tasks_;
 
   // synchronization
-  std::mutex queue_mutex;
-  std::condition_variable condition;
-  bool stop;
+  std::mutex queue_mutex_;
+  std::condition_variable condition_;
+  bool stop_;
 };
 
 // add new work item to the pool
 template <class F, class... Args>
-auto ThreadPool::enqueue(F&& f, Args&&... args)  // NOLINT(build/c++11)
+auto ThreadPool::Enqueue(F&& f, Args&&... args)  // NOLINT(build/c++11)
     -> std::future<typename std::result_of<F(Args...)>::type> {
   using return_type = typename std::result_of<F(Args...)>::type;
 
@@ -67,14 +67,14 @@ auto ThreadPool::enqueue(F&& f, Args&&... args)  // NOLINT(build/c++11)
 
   std::future<return_type> res = task->get_future();
   {
-    std::unique_lock<std::mutex> lock(queue_mutex);
+    std::unique_lock<std::mutex> lock(queue_mutex_);
 
     // don't allow enqueueing after stopping the pool
-    if (stop) throw std::runtime_error("enqueue on stopped ThreadPool");
+    if (stop_) throw std::runtime_error("enqueue on stopped ThreadPool");
 
-    tasks.emplace([task]() { (*task)(); });
+    tasks_.emplace([task]() { (*task)(); });
   }
-  condition.notify_one();
+  condition_.notify_one();
   return res;
 }
 

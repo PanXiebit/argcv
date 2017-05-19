@@ -54,11 +54,11 @@ TEST(thread_pool, plus_one) {
   uint32_t gt_score = 0;
   for (size_t i = 0; i < task_size; i++) {
     gt_score += (uint32_t)i;
-    results.emplace_back(pool.enqueue([i, thread_size, task_size, &apple] {
+    results.emplace_back(pool.Enqueue([i, thread_size, task_size, &apple] {
       LOG(INFO) << "[test_case_threads] start: " << i << " of [" << thread_size
                 << " @ " << task_size << "]";
       // usleep(i);
-      uint32_t res = atomic_fetch_add<uint32_t>(&apple, (uint32_t)1);
+      uint32_t res = AtomicFetchAdd<uint32_t>(&apple, (uint32_t)1);
       LOG(INFO) << "[test_case_threads] end: " << i << " of [" << thread_size
                 << " @ " << task_size << "]";
       return res;
