@@ -43,13 +43,13 @@
 
 using argcv::nio::TcpListenPool;
 using argcv::nio::Conn;
-using argcv::nio::sockStatusExplain;
+using argcv::nio::SockStatusExplain;
 
 typedef struct sockaddr SA;
 
 static const int kListenPort = 19527;
 
-void echo_server_test(int *status) {
+void EchoServerTest(int *status) {
   TcpListenPool pool(kListenPort, 3);
   size_t sz_min_sleep = 100;
   size_t sz_max_sleep = 300000;
@@ -59,29 +59,29 @@ void echo_server_test(int *status) {
   (*status) = 1;
   LOG(INFO) << "status =>" << (*status);
   for (;;) {
-    int id = pool.poll(0);
+    int id = pool.Poll(0);
     if (id != -1) {
       sz_sleep = sz_min_sleep;
       LOG(INFO) << "ACCEPT, ID:" << id;
       Conn &c = pool[id];
-      ssize_t st = pool.pull(id, 1024);
+      ssize_t st = pool.Pull(id, 1024);
       LOG(INFO) << "ACCEPT, STATUS:" << st;
       if (st > 0) {
         std::string s = c.to_str();
         LOG(INFO) << "LENGTH:" << c.to_str().length() << " DATA[" << c.to_str()
                   << "]";
-        c.write(c.to_str(), c.to_str().length());
-        c.clear();
+        c.Write(c.to_str(), c.to_str().length());
+        c.Clear();
       } else {
-        if (c.closed()) {
+        if (c.Closed()) {
           LOG(INFO) << "is closed";
           break;
         } else {
-          LOG(WARNING) << "unknown error:" << sockStatusExplain(c.status());
+          LOG(WARNING) << "unknown error:" << SockStatusExplain(c.status());
           break;
         }
       }
-      c.flush();
+      c.Flush();
     } else {
       // printf("sleep ...[%lu] time %lu\n",loop++,sz_sleep);
       // fflush(NULL);
@@ -99,7 +99,7 @@ void echo_server_test(int *status) {
  * host: host name or ip
  * serv: port or service
  */
-int tcp_connect(const char *host, const char *serv) {
+int TcpConnect(const char *host, const char *serv) {
   int sockfd;
   int n;
   struct addrinfo hints;
@@ -143,7 +143,7 @@ int tcp_connect(const char *host, const char *serv) {
   return sockfd;
 }
 
-void send_echo_request(const int &sock_fd, const char *buff) {
+void SendEchoRequest(const int &sock_fd, const char *buff) {
   EXPECT_LT(0, sock_fd);
   struct sockaddr_storage ss;
   socklen_t len = sizeof(ss);
@@ -173,16 +173,16 @@ TEST(thread_pool, echo) {
 
   int serve_status = 0;
 
-  std::thread my_server(echo_server_test, &serve_status);
+  std::thread my_server(EchoServerTest, &serve_status);
   while (serve_status == 0) {
     usleep(333);
     LOG(INFO) << "waiting...";
   }
   LOG(INFO) << "starting...";
-  int sock_fd = tcp_connect("127.0.0.1", "19527");
+  int sock_fd = TcpConnect("127.0.0.1", "19527");
 
-  send_echo_request(sock_fd, "this is a request");
-  send_echo_request(sock_fd, "this is another request");
+  SendEchoRequest(sock_fd, "this is a request");
+  SendEchoRequest(sock_fd, "this is another request");
 
   usleep(1 * 1000 * 1000);
   LOG(INFO) << "START CLOSE FD";

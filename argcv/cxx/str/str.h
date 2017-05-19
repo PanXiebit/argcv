@@ -26,8 +26,8 @@
 #ifndef ARGCV_CXX_STR_STR_H_
 #define ARGCV_CXX_STR_STR_H_
 
-#include <cstring>
 #include <cstdlib>
+#include <cstring>
 
 #include <algorithm>
 #include <string>

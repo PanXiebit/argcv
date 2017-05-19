@@ -76,7 +76,7 @@ enum class SockStatus : unsigned char {
   kSockAlive = static_cast<int>(kSockSuspend)
 };
 
-const std::string sockStatusExplain(SockStatus status);
+const std::string SockStatusExplain(SockStatus status);
 
 class TcpListenPool {
  public:
@@ -106,37 +106,37 @@ class TcpListenPool {
     SockStatus status() { return status_; }
     void status(SockStatus m_status) { status_ = m_status; }
 
-    void reset(int m_fd, SockStatus m_status) {
+    void Reset(int m_fd, SockStatus m_status) {
       data_.clear();
       fd_ = m_fd;
       status_ = m_status;
     }
 
-    void push(const std::string &d) { data_ += d; }
+    void Push(const std::string &d) { data_ += d; }
 
     size_t size() { return data_.size(); }
 
-    void flush() {
-      if (closed()) {
+    void Flush() {
+      if (Closed()) {
         pool_->closed_size_dec();
         status_ = SockStatus::kSockInvalid;
-        fd_ = pool_->update_free_co_clue(index_);
+        fd_ = pool_->UpdateFreeCoClue(index_);
         data_.clear();
       }
     }
 
-    void clear() {
+    void Clear() {
       // cleanup the buffer
       data_.clear();
     }
 
-    bool closed() {
+    bool Closed() {
       return SockStatus::kSockClosed == status_ && data_.empty();
     }
     bool empty() { return data_.empty(); }
 
     const std::string &to_str() const { return data_; }
-    ssize_t write(const std::string &data, size_t sz) {
+    ssize_t Write(const std::string &data, size_t sz) {
       // return send(fd,data.c_str(),sz,MSG_DONTWAIT);
       for (;;) {
         ssize_t n_bytes = send(fd_, data.c_str(), sz,
@@ -147,7 +147,7 @@ class TcpListenPool {
                                );  // NOLINT(whitespace/parens)
         // int n_bytes = ::write(fd, data.c_str(), sz);//
         if (0 == n_bytes) {
-          deactive();
+          Deactive();
         } else if (-1 == n_bytes) {
           switch (errno) {  // #include <error.h>
             case EWOULDBLOCK:
@@ -156,7 +156,7 @@ class TcpListenPool {
             case EINTR:
               continue;
             default:
-              deactive();
+              Deactive();
               break;
           }
         }
@@ -164,7 +164,7 @@ class TcpListenPool {
       }
     }
 
-    ssize_t pull(int32_t sz = 2048) {
+    ssize_t Pull(int32_t sz = 2048) {
       switch (status_) {
         // case SockStatus::kSockRead:
         //    _c->_status(SockStatus::kSockSuspend);
@@ -173,7 +173,7 @@ class TcpListenPool {
           return -1;  // status: is closed
         default:
           if (SockStatus::kSockPollin != status_) {
-            LOG(WARNING) << "unexpected status: " << sockStatusExplain(status_);
+            LOG(WARNING) << "unexpected status: " << SockStatusExplain(status_);
             return -2;  // unexpected status
           }
       }
@@ -188,11 +188,11 @@ class TcpListenPool {
           ssize_t n_bytes = recv(fd_, &buffer, (size_t)szPull, MSG_DONTWAIT);
           if (0 < n_bytes) {
             // _c->_status(SockStatus::kSockRead);
-            push(std::string(buffer, n_bytes));
+            Push(std::string(buffer, n_bytes));
             break;
           }
           if (0 == n_bytes) {
-            deactive();
+            Deactive();
             return 0;  // deactive
           }
           if (-1 == n_bytes) {  // some error founded
@@ -203,7 +203,7 @@ class TcpListenPool {
               case EINTR:
                 continue;
               default:
-                deactive();
+                Deactive();
                 break;
             }
             return -3;  // other error
@@ -222,7 +222,7 @@ class TcpListenPool {
     std::string data_;
     SockStatus status_;
 
-    void deactive() {
+    void Deactive() {
       status_ = SockStatus::kSockClosed;
       data_.clear();
       close(fd_);
@@ -247,7 +247,7 @@ class TcpListenPool {
         error_no_(0) {
     LOG(INFO) << "starting TcpListenPool.. :" << m_port
               << " max conn size:" << m_max_conn_size;
-    if (!init()) {
+    if (!Init()) {
       LOG(WARNING) << "TcpListenPool start failed...";
       error_no_ = -1;  // start failed
     }
@@ -264,20 +264,9 @@ class TcpListenPool {
     LOG(INFO) << "TcpListenPool closed";
   }
 
-  const int port() const { return port_; }
-  const size_t max_conn_size() const { return max_conn_size_; }
-  const int error_no() const { return error_no_; }
-
-  Conn &get(size_t idx) { return co_[idx]; }
-  Conn &operator[](size_t idx) { return co_[idx]; }
-
-  int conn_id(size_t index_) { return co_[index_].fd(); }
-
-  int &ev_fd() { return ev_fd_; }
-
-  int poll(int timeout) {  // get a new id
+  int Poll(int timeout) {  // get a new id
     if (sz_closed_ > 0) {
-      int closed_fd = report_closed();
+      int closed_fd = ReportClosed();
       if (-1 != closed_fd) {
         return closed_fd;
       }
@@ -292,12 +281,12 @@ class TcpListenPool {
     int _1 __attribute__((unused)) = 1;
 
     for (;;) {
-      void *_reply = _evq_read_one();
-      if (nullptr == _reply) {
-        // printf("_evq_read_one :: null ...\n");
+      void *evq_reply = EvqReadOne();
+      if (nullptr == evq_reply) {
+        // printf("EvqReadOne :: null ...\n");
         return -1;
       }
-      if (LISTENSOCKET == _reply) {
+      if (LISTENSOCKET == evq_reply) {
         struct sockaddr_in remote_addr;
         socklen_t len = sizeof(struct sockaddr_in);
         int client_fd =
@@ -314,11 +303,11 @@ class TcpListenPool {
             LOG(WARNING) << "[SOCKET] Failed to set SO_NOSIGPIPE: "
                          << strerror(errno);
 #endif  // SO_NOSIGPIPE
-          active(client_fd);
+          Active(client_fd);
         }
       } else {
-        // Conn *_c = (Conn *)_reply;
-        Conn *c = reinterpret_cast<Conn *>(_reply);
+        // Conn *_c = (Conn *)evq_reply;
+        Conn *c = reinterpret_cast<Conn *>(evq_reply);
         int idx = c->index();
         c->status(SockStatus::kSockPollin);
         return idx;
@@ -326,19 +315,32 @@ class TcpListenPool {
     }
   }
 
-  ssize_t pull(size_t idx, int sz = 2048) {
+  ssize_t Pull(size_t idx, int sz = 2048) {
     if (idx >= max_conn_size_) {
       return -3;  // error: idx not found
     }
-    return co_[idx].pull(sz);  //
+    return co_[idx].Pull(sz);  //
   }
 
-  ssize_t write(size_t idx, const std::string &data, size_t sz) {
+  ssize_t Write(size_t idx, const std::string &data, size_t sz) {
     if (idx >= max_conn_size_) {
       return -1;
     }
-    return co_[idx].write(data, sz);
+    return co_[idx].Write(data, sz);
   }
+
+  // variables
+
+  const int port() const { return port_; }
+  const size_t max_conn_size() const { return max_conn_size_; }
+  const int error_no() const { return error_no_; }
+
+  Conn &get(size_t idx) { return co_[idx]; }
+  Conn &operator[](size_t idx) { return co_[idx]; }
+
+  int conn_id(size_t index_) { return co_[index_].fd(); }
+
+  int &ev_fd() { return ev_fd_; }
 
  private:
   const int port_;
@@ -364,7 +366,7 @@ class TcpListenPool {
 #elif __KQUEUE__
   struct kevent ev_[kSzListenQ];
 #endif  // __KQUEUE__
-  bool init() {
+  bool Init() {
     listen_fd_ = socket(AF_INET, SOCK_STREAM, 0);
 
     if (-1 == listen_fd_) {
@@ -463,7 +465,7 @@ class TcpListenPool {
       return n;
     }
   }
-  void *_evq_read_one() {
+  void *EvqReadOne() {
     if (evq_head_ >= evq_len_) {
       return nullptr;
     }
@@ -475,19 +477,19 @@ class TcpListenPool {
 #endif  // __KQUEUE__
   }
 
-  int co_alloc() {
+  int CoAlloc() {
     // std::lock_guard<std::mutex> l(_free_co_clue_mutex);
     if (-1 == free_co_clue_) {
       return -1;
     }
     int s = free_co_clue_;
     free_co_clue_ = co_[s].fd();
-    // printf("co_alloc::%d\n",s);
+    // printf("CoAlloc::%d\n",s);
     return s;
   }
 
-  void active(int fd) {
-    int co_offset = co_alloc();
+  void Active(int fd) {
+    int co_offset = CoAlloc();
     if (-1 == co_offset) {
       LOG(WARNING) << "TcpListenPool::active for FD: " << fd
                    << " **FAILED** , because assign connection failed";
@@ -513,11 +515,11 @@ class TcpListenPool {
       return;
     }
 #endif  // __KQUEUE__
-    co_[co_offset].reset(fd, SockStatus::kSockSuspend);
+    co_[co_offset].Reset(fd, SockStatus::kSockSuspend);
     LOG(INFO) << "TcpListenPool::active for FD: " << fd << ", new connection";
   }
 
-  int report_closed() {
+  int ReportClosed() {
     for (size_t i = 0; i < max_conn_size_; i++) {
       if (SockStatus::kSockClosed == co_[i].status()) {
         return static_cast<int>(i);
@@ -526,7 +528,7 @@ class TcpListenPool {
     return -1;
   }
 
-  int update_free_co_clue(int offset) {
+  int UpdateFreeCoClue(int offset) {
     int rt_offset = free_co_clue_;
     free_co_clue_ = offset;
     return rt_offset;
@@ -561,12 +563,12 @@ void echo_server() {
     } else {
         printf("pool established .. %d \n", pool._error_no());
         for (;;) {
-            int id = pool.poll(0);
+            int id = pool.Poll(0);
             if (id != -1) {
                 sz_sleep = sz_min_sleep;
                 printf("#### id: %d\n", id);
                 TcpListenPool::conn &c = pool[id];
-                bool st = pool.pull(id, 1);
+                bool st = pool.Pull(id, 1);
                 if (st) {
                     // printf("data:[%s] %lu \n",c.to_str().c_str(),
 c.to_str().length());
@@ -575,7 +577,7 @@ c.to_str().length());
                         printf("%lu %d %c\n", i, c.to_str()[i], c.to_str()[i]);
                     }
                     // sleep(3);
-                    c.write(c.to_str(), c.to_str().length());
+                    c.Write(c.to_str(), c.to_str().length());
                 } else {
                     if (c.closed()) {
                         printf("is closed .. \n");
@@ -584,7 +586,7 @@ c.to_str().length());
 c._status());
                     }
                 }
-                c.flush();
+                c.Flush();
             } else{
                 //printf("sleep ...[%lu] time %lu\n",loop++,sz_sleep);
                 //fflush(NULL);
@@ -609,15 +611,15 @@ void file_server() {
         printf("pool established .. %d \n", pool._error_no());
         FILE *f = fopen("recv.dat", "wb");
         for (;;) {
-            int id = pool.poll(0);
+            int id = pool.Poll(0);
             if (id != -1) {
                 printf("#### id: %d\n", id);
                 conn &c = pool[id];
-                bool st = pool.pull(id);
+                bool st = pool.Pull(id);
                 if (st) {
                     fwrite(c.to_str().c_str(), c.to_str().length(), 1, f);
                     printf("accept : %lu bytes\n", c.to_str().length());
-                    c.flush();
+                    c.Flush();
                 } else {
                     if (c.closed()) {
                         printf("is closed .. \n");
@@ -626,7 +628,7 @@ void file_server() {
                         printf("unknown error ? \n status : %hhu\n",
 c._status());
                     }
-                    c.flush();
+                    c.Flush();
                 }
             }
         }
