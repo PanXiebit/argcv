@@ -41,7 +41,7 @@ class BlzHasher {
   ~BlzHasher() {}
 
   // k : string , offset shall not too large , 0-3 in suggestion
-  uint64_t hash(const std::string &k, uint16_t offset = 0) {
+  uint64_t Hash(const std::string &k, uint16_t offset = 0) {
     uint64_t seed_a = 0x7FED7FED, seed_b = 0xEEEEEEEE;
     uint64_t ch;
     for (uint64_t i = 0; i < k.length(); i++) {

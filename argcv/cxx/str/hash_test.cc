@@ -39,8 +39,8 @@ class BlzHasherTest : public testing::Test {
 
   virtual void TearDown() {}
 
-  uint64_t hash(const std::string &k, uint16_t offset = 0) {
-    return hasher_.hash(k, offset);
+  uint64_t Hash(const std::string &k, uint16_t offset = 0) {
+    return hasher_.Hash(k, offset);
   }
 };
 
@@ -48,15 +48,15 @@ TEST_F(BlzHasherTest, TestEQ) {
   const std::string s0 = "argcv-test-0";
   const std::string s1 = "argcv-test-0";
   EXPECT_EQ(s0, s1);
-  EXPECT_EQ(hash(s0, 0), hash(s1, 0));
-  EXPECT_EQ(hash(s0, 1), hash(s1, 1));
-  EXPECT_EQ(hash(s0, 2), hash(s1, 2));
+  EXPECT_EQ(Hash(s0, 0), Hash(s1, 0));
+  EXPECT_EQ(Hash(s0, 1), Hash(s1, 1));
+  EXPECT_EQ(Hash(s0, 2), Hash(s1, 2));
 }
 
 TEST_F(BlzHasherTest, TestNE) {
   const std::string s0 = "argcv-test-0";
   const std::string s1 = "argcv-test-1";
   EXPECT_NE(s0, s1);
-  EXPECT_TRUE((hash(s0, 0) != hash(s1, 0)) || (hash(s0, 1) != hash(s1, 1)) ||
-              (hash(s0, 2) != hash(s1, 2)));
+  EXPECT_TRUE((Hash(s0, 0) != Hash(s1, 0)) || (Hash(s0, 1) != Hash(s1, 1)) ||
+              (Hash(s0, 2) != Hash(s1, 2)));
 }
