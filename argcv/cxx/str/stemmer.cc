@@ -41,7 +41,7 @@ namespace str {
 /**
  * stemm a string
  */
-std::vector<std::string> stemm_s(const std::string &str) {
+std::vector<std::string> StemmString(const std::string &str) {
   std::vector<std::string> rt;
   std::string buff;
   size_t sz = str.length();
@@ -84,7 +84,7 @@ std::vector<std::string> stemm_s(const std::string &str) {
 
     if (m != cm) {
       if (buff.length() > 0) {
-        if (utf8_char_length(buff[0]) == 1) {
+        if (Utf8CharLength(buff[0]) == 1) {
           Porter2Stemmer::stem(buff);
         }
         rt.push_back(buff);
@@ -97,7 +97,7 @@ std::vector<std::string> stemm_s(const std::string &str) {
     }
   }
   if (buff.length() > 0) {
-    if (utf8_char_length(buff[0]) == 1) {
+    if (Utf8CharLength(buff[0]) == 1) {
       Porter2Stemmer::stem(buff);
     }
     rt.push_back(buff);
@@ -108,7 +108,7 @@ std::vector<std::string> stemm_s(const std::string &str) {
 /**
  * stemm a string, it will remove all Non ASCII words
  */
-std::vector<std::string> stemm_s_cl(const std::string &str) {
+std::vector<std::string> StemmStringClear(const std::string &str) {
   std::vector<std::string> rt;
   std::string buff;
   size_t sz = str.length();
@@ -135,7 +135,7 @@ std::vector<std::string> stemm_s_cl(const std::string &str) {
 /**
  * stemm a word
  */
-std::string stemm_w(const std::string &word) {
+std::string StemmWord(const std::string &word) {
   std::string buff = word;
   Porter2Stemmer::stem(buff);
   return buff;

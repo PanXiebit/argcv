@@ -67,10 +67,10 @@ void EchoServerTest(int *status) {
       ssize_t st = pool.Pull(id, 1024);
       LOG(INFO) << "ACCEPT, STATUS:" << st;
       if (st > 0) {
-        std::string s = c.to_str();
-        LOG(INFO) << "LENGTH:" << c.to_str().length() << " DATA[" << c.to_str()
+        std::string s = c.str();
+        LOG(INFO) << "LENGTH:" << c.str().length() << " DATA[" << c.str()
                   << "]";
-        c.Write(c.to_str(), c.to_str().length());
+        c.Write(c.str(), c.str().length());
         c.Clear();
       } else {
         if (c.Closed()) {

@@ -35,17 +35,17 @@ namespace str {
 /**
  * stemm a string
  */
-std::vector<std::string> stemm_s(const std::string &str);
+std::vector<std::string> StemmString(const std::string &str);
 
 /**
  * stemm a string, it will remove all Non ASCII words
  */
-std::vector<std::string> stemm_s_cl(const std::string &str);
+std::vector<std::string> StemmStringClear(const std::string &str);
 
 /**
  * stemm a word
  */
-std::string stemm_w(const std::string &word);
+std::string StemmWord(const std::string &word);
 
 }  // namespace str
 }  // namespace argcv

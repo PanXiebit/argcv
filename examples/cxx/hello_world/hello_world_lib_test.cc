@@ -28,6 +28,6 @@
 #include "gtest/gtest.h"
 
 TEST(HelloWorldLib, First) {
-  EXPECT_EQ(1, p1(0));
-  EXPECT_EQ(2, p1(p1(0)));
+  EXPECT_EQ(1, PlusOne(0));
+  EXPECT_EQ(2, PlusOne(PlusOne(0)));
 }

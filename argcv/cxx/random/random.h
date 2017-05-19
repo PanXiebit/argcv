@@ -39,21 +39,21 @@ static const char alphanum[] =
     "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
     "abcdefghijklmnopqrstuvwxyz";
 
-inline int random_int() {
+inline int RandomInt() {
   static unsigned int seed = (unsigned int)time(NULL);
   return rand_r(&seed);
 }
 
-inline double random_double() {
-  return static_cast<double>(random_int()) / RAND_MAX;
+inline double RandomDouble() {
+  return static_cast<double>(RandomInt()) / RAND_MAX;
 }
 
-inline std::string random_str(const int len,
-                              const std::string& cands = alphanum) {
+inline std::string RandomStr(const int len,
+                             const std::string& cands = alphanum) {
   size_t len_of_cands = cands.size();
   std::string s;
   for (int i = 0; i < len; ++i) {
-    s += alphanum[random_int() % (len_of_cands - 1)];
+    s += alphanum[RandomInt() % (len_of_cands - 1)];
   }
   return s;
 }

@@ -33,12 +33,12 @@ namespace str {
 
 // a hasher, from string to uint64_t
 // usage :
-// argcv::string::BLZHasher h;
+// argcv::string::BlzHasher h;
 // printf("%llu\n",h.hash("hello",0));
-class BLZHasher {
+class BlzHasher {
  public:
-  BLZHasher() { init(); }
-  ~BLZHasher() {}
+  BlzHasher() { Init(); }
+  ~BlzHasher() {}
 
   // k : string , offset shall not too large , 0-3 in suggestion
   uint64_t hash(const std::string &k, uint16_t offset = 0) {
@@ -47,16 +47,16 @@ class BLZHasher {
     for (uint64_t i = 0; i < k.length(); i++) {
       ch = (uint64_t)k[i];
       // ch = toupper(*k++);
-      seed_a = crypt[(offset << 8) + ch] ^ (seed_a + seed_b);
+      seed_a = crypt_[(offset << 8) + ch] ^ (seed_a + seed_b);
       seed_b = ch + seed_a + seed_b + (seed_b << 5) + 3;
     }
     return seed_a;
   }
 
  private:
-  uint64_t crypt[0x500];  // seed
+  uint64_t crypt_[0x500];  // seed
 
-  bool init() {
+  bool Init() {
     uint64_t seed = 0x00100001, idx_a = 0, idx_b = 0, i;
     for (idx_a = 0; idx_a < 0x100; idx_a++) {
       for (idx_b = idx_a, i = 0; i < 5; i++, idx_b += 0x100) {
@@ -65,7 +65,7 @@ class BLZHasher {
         t1 = (seed & 0xFFFF) << 0x10;
         seed = (seed * 125 + 3) % 0x2AAAAB;
         t2 = (seed & 0xFFFF);
-        crypt[idx_b] = (t1 | t2);
+        crypt_[idx_b] = (t1 | t2);
       }
     }
     return true;

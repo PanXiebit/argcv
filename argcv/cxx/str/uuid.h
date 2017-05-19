@@ -45,17 +45,17 @@
 namespace argcv {
 namespace str {
 
-const size_t kSzUUIDHexBuff = sizeof(uint64_t) * 4 + 1;  //  8 * 4 + 1 = 33
+const size_t kSzUuidHexBuff = sizeof(uint64_t) * 4 + 1;  //  8 * 4 + 1 = 33
 
 // rel: https://tools.ietf.org/html/rfc4122
 // rel: http://docs.oracle.com/javase/7/docs/api/java/util/UUID.html
 // rel:
 // https://support.datastax.com/hc/en-us/articles/204226019-Converting-TimeUUID-Strings-to-Dates
-class UUID {
+class Uuid {
  public:
-  explicit UUID(uint16_t node = 0) { assign(node); }
-  explicit UUID(uint64_t _hi, uint64_t _lo) : _hi(_hi), _lo(_lo) {}
-  explicit UUID(const std::string& str) {
+  explicit Uuid(uint16_t node = 0) { assign(node); }
+  explicit Uuid(uint64_t _hi, uint64_t _lo) : _hi(_hi), _lo(_lo) {}
+  explicit Uuid(const std::string& str) {
     _hi = 0;
     _lo = 0;
     if (str.size() == 36 && str[8] == '-' && str[13] == '-' && str[18] == '-' &&
@@ -129,7 +129,7 @@ class UUID {
     _hi |= _version << 12;
 
     // _lo
-    uint16_t clock_seq = argcv::random::random_int() & 0x3FFF;  //
+    uint16_t clock_seq = argcv::random::RandomInt() & 0x3FFF;  //
     // uint8_t clock_seq_low = clock_seq & 0xFF;
     // uint8_t clock_seq_hi_variant = (clock_seq >> 8) & 0x3F;
 
@@ -142,17 +142,17 @@ class UUID {
     return true;
   }
 
-  ~UUID() {}
+  ~Uuid() {}
 
   std::string hex() {
     // const size_t sz_buff = sizeof(_hi) * 4 + 1;  //  8 * 4
     // const size_t sz_buff = 32 + 1;
-    char buff[kSzUUIDHexBuff];  //
-    snprintf(buff, kSzUUIDHexBuff, "%016llx%016llx", _hi, _lo);
+    char buff[kSzUuidHexBuff];  //
+    snprintf(buff, kSzUuidHexBuff, "%016llx%016llx", _hi, _lo);
     return std::string(buff);
   }
 
-  std::string data() { return as_str<uint64_t>(_hi) += as_str<uint64_t>(_lo); }
+  std::string data() { return AsStr<uint64_t>(_hi) += AsStr<uint64_t>(_lo); }
 
   std::string str() {
     std::string s_val;
@@ -181,17 +181,17 @@ class UUID {
 
   std::pair<uint64_t, uint64_t> pair() { return std::make_pair(_hi, _lo); }
 
-  bool operator==(UUID const& rhs) { return _lo == rhs._lo && _hi == rhs._hi; }
+  bool operator==(Uuid const& rhs) { return _lo == rhs._lo && _hi == rhs._hi; }
 
-  bool operator!=(UUID const& rhs) { return !(*this == rhs); }
+  bool operator!=(Uuid const& rhs) { return !(*this == rhs); }
 
-  bool operator>(UUID const& rhs) { return _hi > rhs._hi; }
+  bool operator>(Uuid const& rhs) { return _hi > rhs._hi; }
 
-  bool operator<(UUID const& rhs) { return _hi < rhs._hi; }
+  bool operator<(Uuid const& rhs) { return _hi < rhs._hi; }
 
-  bool operator>=(UUID const& rhs) { return _hi >= rhs._hi; }
+  bool operator>=(Uuid const& rhs) { return _hi >= rhs._hi; }
 
-  bool operator<=(UUID const& rhs) { return _hi <= rhs._hi; }
+  bool operator<=(Uuid const& rhs) { return _hi <= rhs._hi; }
 
  private:
   uint64_t _hi;

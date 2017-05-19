@@ -29,9 +29,9 @@
 
 #include "gtest/gtest.h"
 
-class BLZHasherTest : public testing::Test {
+class BlzHasherTest : public testing::Test {
  public:
-  argcv::str::BLZHasher hasher_;
+  argcv::str::BlzHasher hasher_;
 
   virtual void SetUp() {
     // this->hasher_.hash("", 0);
@@ -44,7 +44,7 @@ class BLZHasherTest : public testing::Test {
   }
 };
 
-TEST_F(BLZHasherTest, TestEQ) {
+TEST_F(BlzHasherTest, TestEQ) {
   const std::string s0 = "argcv-test-0";
   const std::string s1 = "argcv-test-0";
   EXPECT_EQ(s0, s1);
@@ -53,7 +53,7 @@ TEST_F(BLZHasherTest, TestEQ) {
   EXPECT_EQ(hash(s0, 2), hash(s1, 2));
 }
 
-TEST_F(BLZHasherTest, TestNE) {
+TEST_F(BlzHasherTest, TestNE) {
   const std::string s0 = "argcv-test-0";
   const std::string s1 = "argcv-test-1";
   EXPECT_NE(s0, s1);

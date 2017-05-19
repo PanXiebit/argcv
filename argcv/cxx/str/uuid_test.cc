@@ -29,20 +29,20 @@
 
 #include "gtest/gtest.h"
 
-using argcv::str::UUID;
+using argcv::str::Uuid;
 
-TEST(UUIDTest, Compare) {
-  UUID u1;
-  UUID u2;
+TEST(UuidTest, Compare) {
+  Uuid u1;
+  Uuid u2;
   EXPECT_TRUE(u1 <= u2);
   EXPECT_TRUE(u1 < u2);
   EXPECT_TRUE(u2 >= u1);
   EXPECT_TRUE(u2 > u1);
 }
 
-TEST(UUIDTest, Copy) {
-  UUID u1;
-  UUID u2 = u1;
+TEST(UuidTest, Copy) {
+  Uuid u1;
+  Uuid u2 = u1;
   EXPECT_TRUE(u1 == u2);
   //
   // std::cout << "u1.hex: " << u1.hex() << ":" << u1.hex().size() << std::endl;
@@ -60,31 +60,31 @@ TEST(UUIDTest, Copy) {
   // std::cout << "u1.pair (" << std::to_string(u1.pair().first) << "," <<
   // std::to_string(u1.pair().second) << ")"<<std::endl;
 
-  UUID u3(u1.data());
+  Uuid u3(u1.data());
   EXPECT_TRUE(u1 == u3);
 
   // std::cout << "u3.pair (" << std::to_string(u3.pair().first) << "," <<
   // std::to_string(u3.pair().second) << ")"<<std::endl;
 
-  UUID u4(u1.hex());
+  Uuid u4(u1.hex());
   EXPECT_TRUE(u1 == u4);
 
   // std::cout << "u4.pair (" << std::to_string(u4.pair().first) << "," <<
   // std::to_string(u4.pair().second) << ")"<<std::endl;
 
-  UUID u5(u1.str());
+  Uuid u5(u1.str());
   EXPECT_TRUE(u1 == u5);
 
   // std::cout << "u5.pair (" << std::to_string(u5.pair().first) << "," <<
   // std::to_string(u5.pair().second) << ")"<<std::endl;
 
   std::pair<uint64_t, uint64_t> p = u1.pair();
-  UUID u6(p.first, p.second);
+  Uuid u6(p.first, p.second);
   EXPECT_TRUE(u1 == u6);
 }
 
-TEST(UUIDTest, ToString) {
-  UUID u1;
+TEST(UuidTest, ToString) {
+  Uuid u1;
   EXPECT_EQ(u1.data().size(), sizeof(uint64_t) * 2);  // 16
   EXPECT_EQ(u1.hex().size(), 32);
   EXPECT_EQ(u1.str().size(), 36);

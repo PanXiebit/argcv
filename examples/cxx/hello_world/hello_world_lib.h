@@ -30,7 +30,7 @@
 extern "C" {
 #endif  //
 
-int p1(int a);
+int PlusOne(int a);
 
 #ifdef __cplusplus
 }

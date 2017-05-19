@@ -28,7 +28,7 @@
 
 #include "glog/logging.h"
 
-int p1(int a) {
+int PlusOne(int a) {
   LOG(INFO) << __FILE__ << "#" << __LINE__ << " update: " << a + 1 << " <- "
             << a;
   return a + 1;

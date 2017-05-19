@@ -133,9 +133,8 @@ class TcpListenPool {
     bool Closed() {
       return SockStatus::kSockClosed == status_ && data_.empty();
     }
-    bool empty() { return data_.empty(); }
+    bool Empty() { return data_.empty(); }
 
-    const std::string &to_str() const { return data_; }
     ssize_t Write(const std::string &data, size_t sz) {
       // return send(fd,data.c_str(),sz,MSG_DONTWAIT);
       for (;;) {
@@ -212,6 +211,10 @@ class TcpListenPool {
       }
       return size();
     }
+
+    // variables
+
+    const std::string &str() const { return data_; }
 
    private:
     // conn(const conn &);  // Prevent copy-construction
@@ -570,14 +573,14 @@ void echo_server() {
                 TcpListenPool::conn &c = pool[id];
                 bool st = pool.Pull(id, 1);
                 if (st) {
-                    // printf("data:[%s] %lu \n",c.to_str().c_str(),
-c.to_str().length());
-                    std::string s = c.to_str();
-                    for (size_t i = 0; i < c.to_str().length(); i++) {
-                        printf("%lu %d %c\n", i, c.to_str()[i], c.to_str()[i]);
+                    // printf("data:[%s] %lu \n",c.str().c_str(),
+c.str().length());
+                    std::string s = c.str();
+                    for (size_t i = 0; i < c.str().length(); i++) {
+                        printf("%lu %d %c\n", i, c.str()[i], c.str()[i]);
                     }
                     // sleep(3);
-                    c.Write(c.to_str(), c.to_str().length());
+                    c.Write(c.str(), c.str().length());
                 } else {
                     if (c.closed()) {
                         printf("is closed .. \n");
@@ -617,8 +620,8 @@ void file_server() {
                 conn &c = pool[id];
                 bool st = pool.Pull(id);
                 if (st) {
-                    fwrite(c.to_str().c_str(), c.to_str().length(), 1, f);
-                    printf("accept : %lu bytes\n", c.to_str().length());
+                    fwrite(c.str().c_str(), c.str().length(), 1, f);
+                    printf("accept : %lu bytes\n", c.str().length());
                     c.Flush();
                 } else {
                     if (c.closed()) {

@@ -36,7 +36,7 @@
 namespace argcv {
 namespace str {
 
-inline std::vector<std::string> &split(const std::string &s,
+inline std::vector<std::string> &Split(const std::string &s,
                                        const std::string &delim,
                                        std::vector<std::string> *_elems,
                                        bool skip_blank_elem = true) {
@@ -60,15 +60,15 @@ inline std::vector<std::string> &split(const std::string &s,
   return *_elems;
 }
 
-inline std::vector<std::string> split(const std::string &s,
+inline std::vector<std::string> Split(const std::string &s,
                                       const std::string &delim,
                                       bool skip_blank_elem = true) {
   std::vector<std::string> elems;
-  split(s, delim, &elems, skip_blank_elem);
+  Split(s, delim, &elems, skip_blank_elem);
   return elems;
 }
 
-inline std::string &replace(std::string *str_raw, const std::string &str_src,
+inline std::string &Replace(std::string *str_raw, const std::string &str_src,
                             const std::string &str_dst) {
   std::string::size_type pos = 0;
   std::string::size_type src_len = str_src.size();
@@ -81,12 +81,12 @@ inline std::string &replace(std::string *str_raw, const std::string &str_src,
 }
 
 template <typename T>
-std::string as_str(T v) {
+std::string AsStr(T v) {
   return std::string(reinterpret_cast<char *>(&v), sizeof(T));
 }
 
 template <typename T>
-std::string as_str(std::vector<T> v) {
+std::string AsStr(std::vector<T> v) {
   std::string r;
   for (size_t ix = 0; ix < v.size(); ix++) {
     r += std::string(reinterpret_cast<char *>(&(v[ix])), sizeof(T));
@@ -95,7 +95,7 @@ std::string as_str(std::vector<T> v) {
 }
 
 template <typename T>
-T as_type(const std::string s) {
+T AsType(const std::string s) {
   T v;
   size_t sz = sizeof(T);
   if (s.size() < sz) {
@@ -107,7 +107,7 @@ T as_type(const std::string s) {
 }
 
 template <typename T>
-T as_type(const std::string s, size_t offset) {
+T AsType(const std::string s, size_t offset) {
   T v;
   size_t sz = sizeof(T);
   if (s.size() < sz + offset) {
@@ -119,7 +119,7 @@ T as_type(const std::string s, size_t offset) {
 }
 
 template <typename T>
-std::vector<T> as_vec(const std::string s, size_t offset = 0) {
+std::vector<T> AsVec(const std::string s, size_t offset = 0) {
   std::vector<T> v;
   size_t tsz = sizeof(T);
   size_t sz = (s.size() - offset) / tsz;
@@ -132,7 +132,7 @@ std::vector<T> as_vec(const std::string s, size_t offset = 0) {
   return v;
 }
 
-inline int utf8_char_length(unsigned char ch) {
+inline int Utf8CharLength(unsigned char ch) {
   unsigned char t = 0x80;
   if (!(ch & t))  // ! 1000 0000 B
     return 1;
@@ -149,11 +149,11 @@ inline int utf8_char_length(unsigned char ch) {
   return l;
 }
 
-inline std::vector<std::string> utf8split(const std::string &s) {
+inline std::vector<std::string> Utf8Split(const std::string &s) {
   std::vector<std::string> elems;
   size_t clen = 0;
   for (size_t i = 0; i < s.length(); i++) {
-    if ((clen = utf8_char_length(s[i]))) {
+    if ((clen = Utf8CharLength(s[i]))) {
       elems.push_back(s.substr(i, clen));
       i += clen - 1;
     } else {
@@ -168,7 +168,7 @@ inline std::vector<std::string> utf8split(const std::string &s) {
  * load a whole file to string
  *
  */
-inline std::string load(const std::string &name) {
+inline std::string LoadFile(const std::string &name) {
   FILE *fp = fopen(name.c_str(), "rb");
   size_t sz;
   char *buff;

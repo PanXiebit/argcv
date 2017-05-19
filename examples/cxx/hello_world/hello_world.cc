@@ -130,7 +130,7 @@ int main(int argc, char* argv[]) {
 
   boost_example();
 
-  LOG(INFO) << "Hello, World! ~~~" << p1(argc);
+  LOG(INFO) << "Hello, World! ~~~" << PlusOne(argc);
 
   func();
 
