@@ -7,8 +7,8 @@ RUN dnf update -y && dnf install openssh* wget bzip2 unzip git gcc-c++ java-1.8.
 RUN ssh-keygen -A
 RUN mkdir /var/run/sshd
 
-# use password 'mypassword123' here
-RUN echo 'root:mypassword123' | chpasswd
+# use password 'youjumpijump' here
+RUN echo 'root:youjumpijump' | chpasswd
 # RUN sed -i 's/PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config
 
 

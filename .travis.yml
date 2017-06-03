@@ -28,18 +28,11 @@ matrix:
       jdk: oraclejdk8  # Building Bazel requires JDK8.
       env:
         - CACHE_NAME=linux
-    - os: osx
-      osx_image: xcode8.3  # Building Bazel requires JDK8.
-      env:
-        - CACHE_NAME=osx
+    # - os: osx
+    #   osx_image: xcode8.3  # Building Bazel requires JDK8.
+    #   env:
+    #     - CACHE_NAME=osx
 
-# addons:
-#   apt:
-#     sources:
-#       - ubuntu-toolchain-r-test
-#     packages:
-#       - wget
-#       - pkg-config
 
 before_install:
   # debug
