@@ -27,56 +27,40 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-package(default_visibility = ["//visibility:public"])
-
-# load("//bazel/grpc:grpc_build_system.bzl", "grpc_proto_library")
-load("//bazel:grpc_proto.bzl", "proto_library")
-
-# grpc_proto_library(
-#     name = "auth_sample",
-#     srcs = ["auth_sample.proto"],
-# )
-#
-# grpc_proto_library(
-#     name = "hellostreamingworld",
-#     srcs = ["hellostreamingworld.proto"],
-# )
-#
-# grpc_proto_library(
-#     name = "helloworld",
-#     srcs = ["helloworld.proto"],
-# )
-#
-# grpc_proto_library(
-#     name = "route_guide",
-#     srcs = ["route_guide.proto"],
-# )
-
-proto_library(
-    name = "auth_sample",
-    src = "auth_sample.proto",
-    has_service = True,
-    generate_cc = True,
-    # generate_java = False, # TDOD
+cc_binary(
+    name = "greeter_client",
+    srcs = ["greeter_client.cc"],
+    deps = ["//examples/proto:helloworld"],
+    defines = ["BAZEL_BUILD"],
 )
 
-proto_library(
-    name = "hellostreamingworld",
-    src = "hellostreamingworld.proto",
-    has_service = True,
-    generate_cc = True,
+cc_binary(
+    name = "greeter_async_client",
+    srcs = ["greeter_async_client.cc"],
+    deps = ["//examples/proto:helloworld"],
+    defines = ["BAZEL_BUILD"],
 )
 
-proto_library(
-    name = "helloworld",
-    src = "helloworld.proto",
-    has_service = True,
-    generate_cc = True,
+cc_binary(
+    name = "greeter_async_client2",
+    srcs = ["greeter_async_client2.cc"],
+    deps = ["//examples/proto:helloworld"],
+    defines = ["BAZEL_BUILD"],
 )
 
-proto_library(
-    name = "route_guide",
-    src = "route_guide.proto",
-    has_service = True,
-    generate_cc = True,
+cc_binary(
+    name = "greeter_server",
+    srcs = ["greeter_server.cc"],
+    defines = ["BAZEL_BUILD"],
+    deps = [
+      "//examples/proto:helloworld",
+      "//external:glog",
+    ],
+)
+
+cc_binary(
+    name = "greeter_async_server",
+    srcs = ["greeter_async_server.cc"],
+    deps = ["//examples/proto:helloworld"],
+    defines = ["BAZEL_BUILD"],
 )

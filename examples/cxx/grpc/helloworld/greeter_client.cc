@@ -39,7 +39,7 @@
 
 // #include "helloworld.grpc.pb.h"
 #ifdef BAZEL_BUILD
-#include "examples/grpc/protos/helloworld.grpc.pb.h"
+#include "examples/proto/helloworld.grpc.pb.h"
 #else
 #include "helloworld.grpc.pb.h"
 #endif

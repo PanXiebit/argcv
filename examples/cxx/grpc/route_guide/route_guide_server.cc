@@ -47,7 +47,7 @@
 #include "helper.h"
 
 #ifdef BAZEL_BUILD
-#include "examples/grpc/protos/route_guide.grpc.pb.h"
+#include "examples/proto/route_guide.grpc.pb.h"
 #else
 #include "route_guide.grpc.pb.h"
 #endif

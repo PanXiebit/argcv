@@ -32,7 +32,7 @@ cc_library(
   hdrs = [
     "helper.h"
   ],
-  deps = ["//examples/grpc/protos:route_guide"],
+  deps = ["//examples/proto:route_guide"],
   defines = ["BAZEL_BUILD"],
 )
 
@@ -41,7 +41,7 @@ cc_binary(
     name = "route_guide_client",
     srcs = ["route_guide_client.cc"],
     deps = [
-      "//examples/grpc/protos:route_guide",
+      "//examples/proto:route_guide",
       ":helper",
     ],
     defines = ["BAZEL_BUILD"],
@@ -51,7 +51,7 @@ cc_binary(
     name = "route_guide_server",
     srcs = ["route_guide_server.cc"],
     deps = [
-      "//examples/grpc/protos:route_guide",
+      "//examples/proto:route_guide",
       ":helper",
     ],
     defines = ["BAZEL_BUILD"],

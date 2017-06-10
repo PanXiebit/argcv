@@ -39,10 +39,11 @@
 
 // #include "helloworld.grpc.pb.h"
 #ifdef BAZEL_BUILD
-#include "examples/grpc/protos/helloworld.grpc.pb.h"
+#include "examples/proto/helloworld.grpc.pb.h"
 #else
 #include "helloworld.grpc.pb.h"
 #endif
+#include "glog/logging.h"
 
 using grpc::Server;
 using grpc::ServerBuilder;
@@ -57,7 +58,9 @@ class GreeterServiceImpl final : public Greeter::Service {
   Status SayHello(ServerContext* context, const HelloRequest* request,
                   HelloReply* reply) override {
     std::string prefix("Hello ");
+    LOG(INFO) << "Get Message:[" << request->name() << "]";
     reply->set_message(prefix + request->name());
+    LOG(INFO) << "Response: [" << (prefix + request->name()) << "]";
     return Status::OK;
   }
 };
@@ -82,6 +85,15 @@ void RunServer() {
 }
 
 int main(int argc, char** argv) {
+  // GLOG Start
+  google::InitGoogleLogging(argv[0]);
+
+  FLAGS_log_dir = ".";
+  FLAGS_stderrthreshold = 0;  // 2 in default
+  FLAGS_minloglevel = 0;
+  FLAGS_colorlogtostderr = true;
+  // GLOG End
+
   RunServer();
 
   return 0;
