@@ -35,7 +35,8 @@
 
 #include "glog/logging.h"
 
-using namespace snappy;
+using snappy::Compress;
+using snappy::Uncompress;
 
 int main(int argc, char* argv[]) {
   google::InitGoogleLogging(argv[0]);
