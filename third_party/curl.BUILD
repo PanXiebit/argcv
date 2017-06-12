@@ -1,5 +1,6 @@
 # Description:
-#   curl is a tool for talking to web servers.
+# curl is a tool for talking to web servers.
+# This is based on https://github.com/tensorflow/tensorflow/blob/master/third_party/curl.BUILD
 
 licenses(["notice"])  # MIT/X derivative license
 
@@ -204,17 +205,17 @@ cc_library(
         "lib/wildcard.h",
         "lib/x509asn1.h",
     ] + select({
-        "@%ws%//tensorflow:darwin": [
+        "@%ws%//argcv:darwin": [
             "lib/vtls/darwinssl.c",
         ],
-        "@%ws%//tensorflow:ios": [
-            "lib/vtls/darwinssl.c",
-        ],
-        "@%ws%//tensorflow:windows": [
+        "@%ws%//argcv:windows": [
             "lib/asyn-thread.c",
             "lib/inet_ntop.c",
             "lib/system_win32.c",
         ],
+        # "@%ws%//tensorflow:ios": [
+        #     "lib/vtls/darwinssl.c",
+        # ],
         "//conditions:default": [
             "lib/vtls/openssl.c",
         ],
@@ -231,7 +232,7 @@ cc_library(
         "include/curl/typecheck-gcc.h",
     ],
     copts = select({
-        "@%ws%//tensorflow:windows": [
+        "@%ws%//argcv:windows": [
             "/I%prefix%/curl/lib",
             "/DHAVE_CONFIG_H",
             "/DCURL_DISABLE_FTP",
@@ -255,10 +256,10 @@ cc_library(
             "-Wno-string-plus-int",
         ],
     }) + select({
-        "@%ws%//tensorflow:darwin": [
+        "@%ws%//argcv:darwin": [
             "-fno-constant-cfstrings",
         ],
-        "@%ws%//tensorflow:windows": [
+        "@%ws%//argcv:windows": [
             # See curl.h for discussion of write size and Windows
             "/DCURL_MAX_WRITE_SIZE=16384",
         ],
@@ -266,19 +267,22 @@ cc_library(
             "-DCURL_MAX_WRITE_SIZE=65536",
         ],
     }),
-    includes = ["include"],
+    includes = [
+      "include",
+      "lib",
+    ],
     linkopts = select({
-        "@%ws%//tensorflow:android": [
-            "-pie",
-        ],
-        "@%ws%//tensorflow:darwin": [
+        # "@%ws%//tensorflow:android": [
+        #     "-pie",
+        # ],
+        "@%ws%//argcv:darwin": [
             "-Wl,-framework",
             "-Wl,CoreFoundation",
             "-Wl,-framework",
             "-Wl,Security",
         ],
-        "@%ws%//tensorflow:ios": [],
-        "@%ws%//tensorflow:windows": [
+        # "@%ws%//tensorflow:ios": [],
+        "@%ws%//argcv:windows": [
             "ws2_32.lib",
         ],
         "//conditions:default": [
@@ -289,8 +293,8 @@ cc_library(
     deps = [
         "@zlib_archive//:zlib",
     ] + select({
-        "@%ws%//tensorflow:ios": [],
-        "@%ws%//tensorflow:windows": [],
+        # "@%ws%//argcv:ios": [],
+        "@%ws%//argcv:windows": [],
         "//conditions:default": [
             "@boringssl//:ssl",
         ],
@@ -386,20 +390,23 @@ cc_binary(
         "src/tool_xattr.h",
     ],
     copts = select({
-        "@%ws%//tensorflow:windows": [
+        "@%ws%//argcv:windows": [
             "/I%prefix%/curl/lib",
             "/DHAVE_CONFIG_H",
             "/DCURL_DISABLE_LIBCURL_OPTION",
         ],
         "//conditions:default": [
-            "-I%prefix%/curl/lib",
+            # "-I%prefix%/curl/lib",
+            # "-Ilib",
             "-D_GNU_SOURCE",
             "-DHAVE_CONFIG_H",
             "-DCURL_DISABLE_LIBCURL_OPTION",
             "-Wno-string-plus-int",
         ],
     }),
-    deps = [":curl"],
+    deps = [
+      ":curl",
+    ],
 )
 
 genrule(

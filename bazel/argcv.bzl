@@ -230,7 +230,7 @@ def argcv_deps():
 
   # curl
   temp_workaround_http_archive(
-      name = "curl",
+      name = "curl_archive",
       sha256 = "ff3e80c1ca6a068428726cd7dd19037a47cc538ce58ef61c59587191039b2ca6",
       urls = [
           "http://bazel-mirror.storage.googleapis.com/curl.haxx.se/download/curl-7.49.1.tar.gz",
@@ -238,7 +238,12 @@ def argcv_deps():
       ],
       strip_prefix = "curl-7.49.1",
       build_file = str(Label("//third_party:curl.BUILD")),
-      repository = ""
+      repository = "",
+  )
+  
+  native.bind(
+      name = "curl",
+      actual = "@curl_archive//:curl",
   )
 
   # It is requreid by grpc
