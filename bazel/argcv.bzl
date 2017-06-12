@@ -164,7 +164,43 @@ def argcv_deps():
       name = "gtest_main",
       actual = "@gmock_archive//:gtest_main",
   )
-
+  
+  # Description:
+  # Snappy is a compression/decompression library 
+  native.new_http_archive(
+      name = "snappy_archive",
+      urls = [
+          "https://github.com/google/snappy/releases/download/1.1.4/snappy-1.1.4.tar.gz",
+      ],
+      sha256 = "134bfe122fd25599bb807bb8130e7ba6d9bdb851e0b16efcb83ac4f5d0b70057",
+      strip_prefix = "snappy-1.1.4",
+      build_file = str(Label("//third_party:snappy.BUILD")),
+  )
+  
+  # gtest main
+  native.bind(
+      name = "snappy",
+      actual = "@snappy_archive//:snappy",
+  )
+  
+  # Description:
+  # LevelDB is a fast key-value storage library written at Google that
+  # provides an ordered mapping from string keys to string values.
+  native.new_http_archive(
+      name = "leveldb_archive",
+      urls = [
+          "https://github.com/google/leveldb/archive/v1.20.tar.gz",
+      ],
+      sha256 = "f5abe8b5b209c2f36560b75f32ce61412f39a2922f7045ae764a2c23335b6664",
+      strip_prefix = "leveldb-1.20",
+      build_file = str(Label("//third_party:leveldb.BUILD")),
+  )
+  
+  # gtest main
+  native.bind(
+      name = "leveldb",
+      actual = "@leveldb_archive//:leveldb",
+  )
 
   # Description:
   #   Six provides simple utilities for wrapping over differences between Python 2
@@ -219,16 +255,6 @@ def argcv_deps():
       sha256 = "e5d3d4e227a0f7afb8745df049bbd4d55474b158ca5aaa2a0e31099af24be1d0",
       strip_prefix = "protobuf-2b7430d96aeff2bb624c8d52182ff5e4b9f7f18a",
   )
-
-  # native.http_archive(
-  #     name = "com_google_protobuf_cc",
-  #     urls = [
-  #         "http://bazel-mirror.storage.googleapis.com/github.com/google/protobuf/archive/2b7430d96aeff2bb624c8d52182ff5e4b9f7f18a.tar.gz",
-  #         "https://github.com/google/protobuf/archive/2b7430d96aeff2bb624c8d52182ff5e4b9f7f18a.tar.gz",
-  #     ],
-  #     sha256 = "e5d3d4e227a0f7afb8745df049bbd4d55474b158ca5aaa2a0e31099af24be1d0",
-  #     strip_prefix = "protobuf-2b7430d96aeff2bb624c8d52182ff5e4b9f7f18a",
-  # )
 
   # grpc expects //external:protobuf_clib and //external:protobuf_compiler
   # to point to the protobuf's compiler library.
@@ -344,36 +370,6 @@ def argcv_deps():
       name = "zlib",
       actual = "@zlib_archive//:zlib",
   )
-  
-  # native.new_http_archive(
-  #     name = "gflags_archive",
-  #     build_file = str(Label("//third_party:gflags.BUILD")), # Use Customized Build File
-  #     sha256 = "659de3fab5ba5a0376e3c2da333e4ecec9c8a4b41709861765e28e02dd562f7a",
-  #     strip_prefix = "gflags-cce68f0c9c5d054017425e6e6fd54f696d36e8ee",
-  #     url = "https://github.com/gflags/gflags/archive/cce68f0c9c5d054017425e6e6fd54f696d36e8ee.zip",
-  # )
-  #
-  # native.bind(
-  #   name = "gflags",
-  #   actual = "@gflags_archive//:gflags",
-  # )
-
-  # from https://gflags.github.io/gflags/ , doesn't work for current glog
-  # native.git_repository(
-  #     name   = "com_github_gflags_gflags",
-  #     commit = "f8a0efe03aa69b3336d8e228b37d4ccb17324b88", # v2.2.0
-  #     remote = "https://github.com/gflags/gflags.git",
-  # )
-  #
-  # native.bind(
-  #     name = "gflags",
-  #     actual = "@com_github_gflags_gflags//:gflags",
-  # )
-  #
-  # native.bind(
-  #     name = "gflags_nothreads",
-  #     actual = "@com_github_gflags_gflags//:gflags_nothreads",
-  # )
 
   native.new_http_archive(
       name = "gflags_archive",
