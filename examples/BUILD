@@ -10,7 +10,6 @@ cc_test(
     # copts = ["-Iexternal/gmock_archive/googletest/include"],
     srcs = glob([
         "test/**/*_test.cc",
-        "test/**/*_test.hh",
         "test/**/*_test.h",
     ]),
     includes = [

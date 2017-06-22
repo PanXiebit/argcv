@@ -5,8 +5,10 @@ if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
   # sudo apt-get update
 
   # install bazel via deb pack
-  wget https://github.com/bazelbuild/bazel/releases/download/0.4.5/bazel_0.4.5-linux-x86_64.deb
-  sudo dpkg -i bazel_0.4.5-linux-x86_64.deb
+  # wget https://github.com/bazelbuild/bazel/releases/download/0.4.5/bazel_0.4.5-linux-x86_64.deb
+  # sudo dpkg -i bazel_0.4.5-linux-x86_64.deb
+  wget https://github.com/bazelbuild/bazel/releases/download/0.5.1/bazel_0.5.1-linux-x86_64.deb
+  sudo dpkg -i bazel_0.5.1-linux-x86_64.deb
 
   # Error: corrupt installation: file '/home/travis/.cache/bazel/_bazel_travis/install/xxx/_embedded_binaries/client' missing. 
   # Please remove '/home/travis/.cache/bazel/_bazel_travis/install/xx' and try again.

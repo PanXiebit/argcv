@@ -175,7 +175,8 @@ inline std::string LoadFile(const std::string &name) {
   fseek(fp, 0, SEEK_END);
   sz = ftell(fp);
   fseek(fp, 0, SEEK_SET);
-  buff = (char *)malloc(sizeof(char) * (sz + 1));
+  // buff = (char *)malloc(sizeof(char) * (sz + 1));
+  buff = reinterpret_cast<char *>(malloc(sizeof(char) * (sz + 1)));
   buff[sz] = '\0';
   fread(buff, sz, 1, fp);
   std::string rtstr(buff, sz);
