@@ -419,7 +419,7 @@ def argcv_deps():
   )
   
   native.new_http_archive(
-      name = "rapidjson_git",
+      name = "rapidjson_archive",
       urls = [
           "https://github.com/miloyip/rapidjson/archive/v1.1.0.tar.gz",
       ],
@@ -430,7 +430,7 @@ def argcv_deps():
   
   native.bind(
     name = "rapidjson",
-    actual = "@rapidjson_git//:rapidjson",
+    actual = "@rapidjson_archive//:rapidjson",
   )
   # # print("argcv configuring deps finished...")
 

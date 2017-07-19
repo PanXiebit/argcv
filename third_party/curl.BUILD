@@ -467,7 +467,12 @@ genrule(
         "#  define HAVE_RAND_EGD 1",
         "#  define HAVE_RAND_STATUS 1",
         "#  define HAVE_SSL_GET_SHUTDOWN 1",
-        "#  define HAVE_STROPTS_H 1",
+        # if HAVE_STROPTS_H is 1, in CentOS 7.0
+        # we will find an error as follow:
+        # external/curl_archive/lib/if2ip.c:47:23: fatal error: stropts.h: No such file or directory
+        #  #  include <stropts.h>
+        #                        ^
+        # "#  define HAVE_STROPTS_H 1",
         "#  define HAVE_TERMIOS_H 1",
         "#  define OS \"x86_64-pc-linux-gnu\"",
         "#  define RANDOM_FILE \"/dev/urandom\"",
