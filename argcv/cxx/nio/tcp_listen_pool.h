@@ -142,8 +142,8 @@ class TcpListenPool {
                                MSG_DONTWAIT
 #ifdef MSG_NOSIGNAL
                                    | MSG_NOSIGNAL
-#endif                             // MSG_NOSIGNAL
-                               );  // NOLINT(whitespace/parens)
+#endif      // MSG_NOSIGNAL
+        );  // NOLINT(whitespace/parens)
         // int n_bytes = ::write(fd, data.c_str(), sz);//
         if (0 == n_bytes) {
           Deactive();

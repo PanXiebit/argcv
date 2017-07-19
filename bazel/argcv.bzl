@@ -417,5 +417,20 @@ def argcv_deps():
     strip_prefix = "boost_1_63_0/",
     sha256 = "beae2529f759f6b3bf3f4969a19c2e9d6f0c503edcb2de4a61d1428519fcb3b0",
   )
+  
+  native.new_http_archive(
+      name = "rapidjson_git",
+      urls = [
+          "https://github.com/miloyip/rapidjson/archive/v1.1.0.tar.gz",
+      ],
+      sha256 = "bf7ced29704a1e696fbccf2a2b4ea068e7774fa37f6d7dd4039d0787f8bed98e",
+      strip_prefix = "rapidjson-1.1.0",
+      build_file = str(Label("//third_party:rapidjson.BUILD")),
+  )
+  
+  native.bind(
+    name = "rapidjson",
+    actual = "@rapidjson_git//:rapidjson",
+  )
   # # print("argcv configuring deps finished...")
 

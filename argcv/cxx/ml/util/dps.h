@@ -28,10 +28,7 @@
 
 // data points
 namespace argcv {
-namespace ml {
-
-}  // namespace nio
+namespace ml {}  // namespace ml
 }  // namespace argcv
-
 
 #endif  //  ARGCV_CXX_ML_UTIL_DPS_H_
