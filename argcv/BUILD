@@ -56,6 +56,12 @@ config_setting(
 )
 
 config_setting(
+    name = "freebsd",
+    values = {"cpu": "freebsd"},
+    visibility = ["//visibility:public"],
+)
+
+config_setting(
     name = "windows",
     values = {"cpu": "x64_windows"},
     visibility = ["//visibility:public"],
@@ -92,12 +98,6 @@ config_setting(
     values = {
         "compilation_mode": "opt",
     },
-    visibility = ["//visibility:public"],
-)
-
-config_setting(
-    name = "freebsd",
-    values = {"cpu": "freebsd"},
     visibility = ["//visibility:public"],
 )
 
