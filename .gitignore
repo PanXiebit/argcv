@@ -45,6 +45,7 @@ util/python/python_lib
 third_party/py/numpy/numpy_include
 
 # generated tools
+.argcv.env.rc
 tools/bazel.rc
 tools/python_bin_path.sh
 
