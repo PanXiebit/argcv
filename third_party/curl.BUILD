@@ -266,7 +266,9 @@ cc_library(
         "//conditions:default": [
             "-DCURL_MAX_WRITE_SIZE=65536",
         ],
-    }),
+    }) + [
+      "-Wno-tautological-pointer-compare",
+    ],
     includes = [
       "include",
       "lib",

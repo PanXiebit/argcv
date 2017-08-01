@@ -115,6 +115,7 @@ cc_library(
         "-Wno-unused-variable",
         "-Wno-implicit-fallthrough",
         "-Wno-unused-function",
+        "-Wno-deprecated-declarations",
         "-O2",
         "-DNDEBUG",
         "-DSNAPPY",

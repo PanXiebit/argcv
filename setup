@@ -55,6 +55,7 @@ if is_non_interactive_mode; then
     echo "No OpenCL support will be enabled for ArgCV"
     ARGCV_NEED_OPENCL=0
   fi
+  echo "[ENV] ARGCV_NEED_OPENCL" "$ARGCV_NEED_OPENCL"
   write_action_env_to_bazelrc "ARGCV_NEED_OPENCL" "$ARGCV_NEED_OPENCL"
 else
   # interactive mode
@@ -67,6 +68,7 @@ else
       * ) echo "Invalid selection: " $INPUT;;
     esac
   done
+  echo "[ENV] ARGCV_NEED_OPENCL" "$ARGCV_NEED_OPENCL"
   write_action_env_to_bazelrc "ARGCV_NEED_OPENCL" "$ARGCV_NEED_OPENCL"
 fi
 
