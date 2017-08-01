@@ -85,8 +85,12 @@ genproto = rule(
 
 def _invoke(rulefn, name, **kwargs):
   """Invoke rulefn with name and kwargs, returning the label of the rule."""
-  rulefn(name=name, **kwargs)
-  return "//{}:{}".format(native.package_name(), name)
+  if hasattr(native, "package_name"):
+    rulefn(name=name, **kwargs)
+    return "//{}:{}".format(native.package_name(), name)
+  else:
+    return rulefn(name=name, **kwargs).label()
+  # return "//{}:{}".format(native.package_name(), name)
 
 def proto_library(name, src, deps=[],
                   visibility=None,
@@ -107,7 +111,7 @@ def proto_library(name, src, deps=[],
     gen_cc=generate_cc,
     grpc_cpp_plugin = grpc_cpp_plugin)
     
-  # print("[" + str(proto_pkg) + "]")
+  print("[" + str(proto_pkg) + "]")
 
   if generate_cc:
     cc_deps = ["//external:protobuf_compiler"]
