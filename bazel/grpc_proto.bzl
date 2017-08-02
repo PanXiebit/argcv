@@ -2,6 +2,7 @@
 # based on https://github.com/google/kythe/blob/master/tools/build_rules/proto.bzl
 # from https://github.com/mzhaom/trunk/blob/master/tools/build_rules/grpc/grpc_proto.bzl
 # currently, it supports cxx only
+# last wip for java and python: https://github.com/yuikns/argcv/blob/85d3bde62ca90279489eeb4012b098ad734ecd96/bazel/grpc_proto.bzl
 
 def collect_proto_sources(ctx):
   source_files = set(order="compile")
