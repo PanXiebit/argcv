@@ -88,7 +88,7 @@ class aprf {
     double r = recall();
     if (p + r == 0) return 0;
     double a2 = a * a;
-    return (a2 + 1) * p * r / (a2 * (p + r));
+    return (a2 + 1) * p * r / (a2 * p + r);
   }
 
   void reset() { tp = tn = fp = fn = 0; }
