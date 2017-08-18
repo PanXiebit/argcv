@@ -25,7 +25,7 @@
  * ref: https://github.com/yuikns/unpbt/blob/master/lib/argcvnw/argcvnw.c
  * ref: https://github.com/yuikns/unpbt/blob/master/src/nwtest.c
  **/
-#include "argcv/cxx/nio/tcp_listen_pool.h"
+#include "argcv/cxx/nio/tcp/tcp_listen_pool.h"
 
 #include <netdb.h>
 #include <sys/socket.h>
@@ -41,9 +41,9 @@
 #include "glog/logging.h"
 #include "gtest/gtest.h"
 
-using argcv::nio::TcpListenPool;
-using argcv::nio::Conn;
-using argcv::nio::SockStatusExplain;
+using argcv::nio::tcp::TcpListenPool;
+using argcv::nio::tcp::Conn;
+using argcv::nio::tcp::SockStatusExplain;
 
 typedef struct sockaddr SA;
 

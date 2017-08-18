@@ -25,140 +25,137 @@ licenses(["notice"])  # MIT
 package(default_visibility = ["//visibility:public"])
 
 cc_library(
-  name = "gtest_ext",
-  # srcs = [
-  #   "empty.cc",
-  # ],
-  hdrs = [
-    "test/gtest_ext.h"
-  ],
-  deps = [
-      "//external:gtest_main",
-  ],
+    name = "gtest_ext",
+    # srcs = [
+    #   "empty.cc",
+    # ],
+    hdrs = [
+        "test/gtest_ext.h",
+    ],
+    deps = [
+        "//external:gtest_main",
+    ],
 )
 
-
 cc_library(
-  name = "argcv_concurrent",
-  srcs = glob(
-    [
-      "concurrent/*.c",
-      "concurrent/*.cc",
-    ],
-    exclude = [
-      "concurrent/*_test.cc",
-    ],
-  ),
-  hdrs = glob(
-    [
-      "concurrent/*.h",
-    ],
-    exclude = [
-      "concurrent/*_test.h",
-    ],
-  )
+    name = "argcv_concurrent",
+    srcs = glob(
+        [
+            "concurrent/*.c",
+            "concurrent/*.cc",
+        ],
+        exclude = [
+            "concurrent/*_test.cc",
+        ],
+    ),
+    hdrs = glob(
+        [
+            "concurrent/*.h",
+        ],
+        exclude = [
+            "concurrent/*_test.h",
+        ],
+    ),
 )
 
 cc_test(
-  name = "argcv_concurrent_test",
-  srcs = glob([
-    "concurrent/*_test.cc",
-    "concurrent/*_test.h",
-  ]),
-  copts = [
-    "-Wno-unused-function",
-  ],
-  deps = [
-    "//external:glog",
-    "//external:gtest_main",
-    ":argcv_concurrent",
-    ":gtest_ext",
-  ],
+    name = "argcv_concurrent_test",
+    srcs = glob([
+        "concurrent/*_test.cc",
+        "concurrent/*_test.h",
+    ]),
+    copts = [
+        "-Wno-unused-function",
+    ],
+    deps = [
+        ":argcv_concurrent",
+        ":gtest_ext",
+        "//external:glog",
+        "//external:gtest_main",
+    ],
 )
 
 cc_library(
-  name = "argcv_nio",
-  srcs = glob(
-    [
-      "nio/*.c",
-      "nio/*.cc",
+    name = "argcv_nio",
+    srcs = glob(
+        [
+            "nio/**/*.c",
+            "nio/**/*.cc",
+        ],
+        exclude = [
+            "nio/**/*_test.cc",
+        ],
+    ),
+    hdrs = glob(
+        [
+            "nio/**/*.h",
+        ],
+        exclude = [
+            "nio/**/*_test.h",
+        ],
+    ),
+    deps = [
+        "//external:glog",
     ],
-    exclude = [
-      "nio/*_test.cc",
-    ],
-  ),
-  hdrs = glob(
-    [
-      "nio/*.h",
-    ],
-    exclude = [
-      "nio/*_test.h",
-    ],
-  ),
-  deps = [
-    "//external:glog",
-  ],
 )
 
 cc_test(
-  name = "argcv_nio_test",
-  srcs = glob([
-    "nio/*_test.cc",
-    "nio/*_test.h",
-  ]),
-  deps = [
-    "//external:glog",
-    "//external:gtest_main",
-    ":argcv_nio",
-    # ":gtest_ext",
-  ],
+    name = "argcv_nio_test",
+    srcs = glob([
+        "nio/**/*_test.cc",
+        "nio/**/*_test.h",
+    ]),
+    deps = [
+        "//external:glog",
+        "//external:gtest_main",
+        ":argcv_nio",
+        # ":gtest_ext",
+    ],
 )
 
 cc_library(
-  name = "argcv_random",
-  hdrs = [
-    "random/random.h"
-  ],
+    name = "argcv_random",
+    hdrs = [
+        "random/random.h",
+    ],
 )
 
 cc_library(
-  name = "argcv_str",
-  srcs = glob(
-    [
-      "str/*.c",
-      "str/*.cc",
+    name = "argcv_str",
+    srcs = glob(
+        [
+            "str/*.c",
+            "str/*.cc",
+        ],
+        exclude = [
+            "str/*_test.cc",
+        ],
+    ),
+    hdrs = glob(
+        [
+            "str/*.h",
+        ],
+        exclude = [
+            "str/*_test.h",
+        ],
+    ),
+    deps = [
+        ":argcv_random",
+        "//external:glog",
+        "//third_party/porter2_stemmer",
     ],
-    exclude = [
-      "str/*_test.cc",
-    ],
-  ),
-  hdrs = glob(
-    [
-      "str/*.h",
-    ],
-    exclude = [
-      "str/*_test.h",
-    ],
-  ),
-  deps = [
-    "//external:glog",
-    ":argcv_random",
-    "//third_party/porter2_stemmer:porter2_stemmer"
-  ],
 )
 
 cc_test(
-  name = "argcv_str_test",
-  srcs = glob([
-    "str/*_test.cc",
-    "str/*_test.h",
-  ]),
-  deps = [
-    "//external:glog",
-    "//external:gtest_main",
-    ":argcv_str",
-    # ":gtest_ext",
-  ],
+    name = "argcv_str_test",
+    srcs = glob([
+        "str/*_test.cc",
+        "str/*_test.h",
+    ]),
+    deps = [
+        "//external:glog",
+        "//external:gtest_main",
+        ":argcv_str",
+        # ":gtest_ext",
+    ],
 )
-
-

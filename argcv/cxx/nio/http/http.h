@@ -23,8 +23,25 @@
  * SOFTWARE.
  *
  **/
-#include "argcv/cxx/nio/tcp_service.h"
+#ifndef ARGCV_CXX_NIO_HTTP_HTTP_H_
+#define ARGCV_CXX_NIO_HTTP_HTTP_H_
+
+#include "glog/logging.h"
 
 namespace argcv {
-namespace nio {}  // namespace nio
+namespace nio {
+namespace http {
+
+class Http {
+ public:
+  Http() {}
+
+  ~Http() {}
+
+ private:
+};
+}  // namespace http
+}  // namespace nio
 }  // namespace argcv
+
+#endif  //  ARGCV_CXX_NIO_HTTP_HTTP_H_

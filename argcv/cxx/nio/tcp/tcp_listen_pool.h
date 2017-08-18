@@ -23,8 +23,8 @@
  * SOFTWARE.
  *
  **/
-#ifndef ARGCV_CXX_NIO_TCP_LISTEN_POOL_H_
-#define ARGCV_CXX_NIO_TCP_LISTEN_POOL_H_
+#ifndef ARGCV_CXX_NIO_TCP_TCP_LISTEN_POOL_H_
+#define ARGCV_CXX_NIO_TCP_TCP_LISTEN_POOL_H_
 
 // for network io
 
@@ -62,6 +62,8 @@
 
 namespace argcv {
 namespace nio {
+
+namespace tcp {
 
 #define LISTENSOCKET (void *)((intptr_t)~0)
 static const int kSzListenQ = 32;
@@ -549,6 +551,8 @@ class TcpListenPool {
 };
 
 typedef TcpListenPool::Conn Conn;
+
+}  // namespace tcp
 }  // namespace nio
 }  // namespace argcv
 
@@ -639,4 +643,4 @@ c._status());
 }
 */
 
-#endif  //  ARGCV_CXX_NIO_TCP_LISTEN_POOL_H_
+#endif  //  ARGCV_CXX_NIO_TCP_TCP_LISTEN_POOL_H_

@@ -23,13 +23,14 @@
  * SOFTWARE.
  *
  **/
-#ifndef ARGCV_CXX_NIO_TCP_SERVICE_H_
-#define ARGCV_CXX_NIO_TCP_SERVICE_H_
+#ifndef ARGCV_CXX_NIO_TCP_TCP_SERVICE_H_
+#define ARGCV_CXX_NIO_TCP_TCP_SERVICE_H_
 
 #include "glog/logging.h"
 
 namespace argcv {
 namespace nio {
+namespace tcp {
 class TcpService {
  public:
   TcpService() {}
@@ -38,7 +39,8 @@ class TcpService {
 
  private:
 };
+}  // namespace tcp
 }  // namespace nio
 }  // namespace argcv
 
-#endif  //  ARGCV_CXX_NIO_TCP_SERVICE_H_
+#endif  //  ARGCV_CXX_NIO_TCP_TCP_SERVICE_H_

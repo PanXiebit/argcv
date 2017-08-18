@@ -23,26 +23,4 @@
  * SOFTWARE.
  *
  **/
-#include "argcv/cxx/nio/tcp_listen_pool.h"
-
-namespace argcv {
-namespace nio {
-const std::string SockStatusExplain(SockStatus status) {
-  switch (status) {
-    case SockStatus::kSockInvalid:
-      return "SockStatus::kSockInvalid";
-    case SockStatus::kSockClosed:
-      return "SockStatus::kSockClosed";
-    case SockStatus::kSockSuspend:
-      return "SockStatus::kSockSuspend||SockStatus::kSockAlive";
-    // case SockStatus::kSockRead:
-    // return "SockStatus::kSockRead";
-    case SockStatus::kSockPollin:
-      return "SockStatus::kSockPollin";
-    default:
-      return "UNKNOWN";
-  }
-}
-
-}  // namespace nio
-}  // namespace argcv
+#include "argcv/cxx/nio/tcp/tcp_service.h"

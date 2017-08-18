@@ -23,4 +23,10 @@
  * SOFTWARE.
  *
  **/
-#include "argcv/cxx/nio/tcp_service.h"
+#include "argcv/cxx/nio/tcp/tcp_service.h"
+
+namespace argcv {
+namespace nio {
+namespace tcp {}  // namespace tcp
+}  // namespace nio
+}  // namespace argcv
