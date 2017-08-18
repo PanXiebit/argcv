@@ -95,6 +95,7 @@ cc_library(
         ],
     ),
     deps = [
+        "//external:curl",
         "//external:glog",
     ],
 )
