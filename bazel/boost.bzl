@@ -202,17 +202,19 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 include_pattern = "boost/%s/"
+
 hdrs_patterns = [
-  "boost/%s.h",
-  "boost/%s.hpp",
-  "boost/%s/**/*.hpp",
-  "boost/%s/**/*.ipp",
-  "boost/%s/**/*.h",
-  "libs/%s/src/*.ipp",
+    "boost/%s.h",
+    "boost/%s.hpp",
+    "boost/%s/**/*.hpp",
+    "boost/%s/**/*.ipp",
+    "boost/%s/**/*.h",
+    "libs/%s/src/*.ipp",
 ]
+
 srcs_patterns = [
-  "libs/%s/src/*.cpp",
-  "libs/%s/src/*.hpp",
+    "libs/%s/src/*.cpp",
+    "libs/%s/src/*.hpp",
 ]
 
 # Building boost results in many warnings for unused values. Downstream users
@@ -258,4 +260,3 @@ def boost_library(name, defines=None, includes=None, hdrs=None, srcs=None, deps=
     copts = default_copts + copts,
     licenses = ["notice"],
   )
-

@@ -30,7 +30,6 @@ def check_version(bazel_version):
           native.bazel_version, bazel_version))
   pass
 
-
 ##########################################################################################
 ########### temp_workaround_http_archive start ###########################################
 ##########################################################################################
@@ -51,15 +50,16 @@ def _temp_workaround_http_archive_impl(repo_ctx):
                                  "", repo_ctx.attr.strip_prefix)
 
 temp_workaround_http_archive = repository_rule(
-   implementation=_temp_workaround_http_archive_impl,
-   attrs = {
-      "build_file": attr.label(),
-      "repository": attr.string(),
-      "urls": attr.string_list(default = []),
-      "sha256": attr.string(default = ""),
-      "strip_prefix": attr.string(default = ""),
-   })
-  
+    attrs = {
+        "build_file": attr.label(),
+        "repository": attr.string(),
+        "urls": attr.string_list(default = []),
+        "sha256": attr.string(default = ""),
+        "strip_prefix": attr.string(default = ""),
+    },
+    implementation = _temp_workaround_http_archive_impl,
+)
+
 ##########################################################################################
 ########### temp_workaround_http_archive end #############################################
 ##########################################################################################
@@ -432,5 +432,4 @@ def argcv_deps():
     name = "rapidjson",
     actual = "@rapidjson_archive//:rapidjson",
   )
-  # # print("argcv configuring deps finished...")
-
+# # print("argcv configuring deps finished...")

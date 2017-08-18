@@ -37,30 +37,30 @@ def _genproto_impl(ctx):
                 proto_src=proto_srcs)
 
 _genproto_attrs = {
-  "src": attr.label(
-    allow_files = FileType([".proto"]),
-    mandatory = True,
-    single_file = True,
-  ),
-  "deps": attr.label_list(
-    allow_files = False,
-    providers = ["proto_src"],
-  ),
-  "has_service": attr.bool(),
-  "_protoc": attr.label(
-    default = Label("//external:protoc"),
-    cfg = 'host',
-    executable = True,
-  ),
-  "grpc_cpp_plugin": attr.label(
-    # We don't specify the default here, otherwise it imposes an
-    # implicit dependency to the plugin, which we may not need
-    # depending on when gen_cc is true.
-    # default = Label("//external:grpc_cpp_plugin"),
-    cfg = 'host',
-    executable = True
-  ),
-  "gen_cc": attr.bool(),
+    "src": attr.label(
+        allow_files = FileType([".proto"]),
+        mandatory = True,
+        single_file = True,
+    ),
+    "deps": attr.label_list(
+        allow_files = False,
+        providers = ["proto_src"],
+    ),
+    "has_service": attr.bool(),
+    "_protoc": attr.label(
+        default = Label("//external:protoc"),
+        cfg = "host",
+        executable = True,
+    ),
+    "grpc_cpp_plugin": attr.label(
+        # We don't specify the default here, otherwise it imposes an
+        # implicit dependency to the plugin, which we may not need
+        # depending on when gen_cc is true.
+        # default = Label("//external:grpc_cpp_plugin"),
+        cfg = "host",
+        executable = True,
+    ),
+    "gen_cc": attr.bool(),
 }
 
 def _genproto_outputs(gen_cc, has_service):
@@ -78,10 +78,10 @@ def _genproto_outputs(gen_cc, has_service):
   return outputs
 
 genproto = rule(
-  _genproto_impl,
-  attrs=_genproto_attrs,
-  output_to_genfiles=True,
-  outputs=_genproto_outputs,
+    _genproto_impl,
+    attrs = _genproto_attrs,
+    output_to_genfiles = True,
+    outputs = _genproto_outputs,
 )
 
 def _invoke(rulefn, name, **kwargs):
@@ -91,7 +91,7 @@ def _invoke(rulefn, name, **kwargs):
     return "//{}:{}".format(native.package_name(), name)
   else:
     return rulefn(name=name, **kwargs).label()
-  # return "//{}:{}".format(native.package_name(), name)
+# return "//{}:{}".format(native.package_name(), name)
 
 def proto_library(name, src, deps=[],
                   visibility=None,
