@@ -54,3 +54,6 @@ app/
 !app/.placeholder
 
 
+.vscode/
+!.vscode/c_cpp_properties.json
+

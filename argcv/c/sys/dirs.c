@@ -79,7 +79,7 @@ int r_trav(const char *path, int recursive, file_handle f_handler, void *user) {
 }
 
 // interface
-int dir_trav(const char *path, int recursive, file_handle f_handler,
+int dir_iter(const char *path, int recursive, file_handle f_handler,
              void *user) {
   int len;
   char tmp[256];
@@ -98,8 +98,8 @@ int dir_trav(const char *path, int recursive, file_handle f_handler,
 
 #else  // for windows
 
-// int dir_trav(const char *path, int recursive,file_handle f_handler)
-int dir_trav(const char* path, int recursive, file_handle f_handler,
+// int dir_iter(const char *path, int recursive,file_handle f_handler)
+int dir_iter(const char* path, int recursive, file_handle f_handler,
              void* user) {
   int len = strlen(path) + 3;
   intptr_t handle;
@@ -146,7 +146,7 @@ int dir_trav(const char* path, int recursive, file_handle f_handler,
 
     if (((fileinfo.attrib & _A_SUBDIR) != 0) && recursive &&
         0 != strcmp(fileinfo.name, ".") && 0 != strcmp(fileinfo.name, ".."))
-      dir_trav(nxtpath, recursive, f_handler, user);
+      dir_iter(nxtpath, recursive, f_handler, user);
   }
   _findclose(handle);
   return 1;

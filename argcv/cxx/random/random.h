@@ -32,6 +32,13 @@
 #include <string>
 
 namespace argcv {
+
+/**
+ * Some Helper for generate random number/strings
+ * Note:
+ * http://en.cppreference.com/w/cpp/numeric/random/uniform_int_distribution
+ * here is a better sulution here
+ */
 namespace random {
 
 static const char alphanum[] =
@@ -39,13 +46,34 @@ static const char alphanum[] =
     "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
     "abcdefghijklmnopqrstuvwxyz";
 
+/**
+ * Random Int is only guaranteed 15 random bits
+ */
 inline int RandomInt() {
   static unsigned int seed = (unsigned int)time(NULL);
   return rand_r(&seed);
 }
 
+/**
+ *
+ */
+inline uint64_t RamdomUInt64() {
+  uint64_t ret = 0;
+  for (int i = 0; i < 5; i++) {
+    // RANDOM MAX = 111 1111 1111 1111
+    ret = (ret << 15) | (RandomInt() & 0x7FFF);
+  }
+  return ret;
+}
+
+const uint64_t kRamdomUInt64Max = 0xffffffffffffffff;
+
 inline double RandomDouble() {
   return static_cast<double>(RandomInt()) / RAND_MAX;
+}
+
+inline double RamdonUInt64Double() {
+  return static_cast<double>(RamdomUInt64()) / kRamdomUInt64Max;
 }
 
 inline std::string RandomStr(const int len,

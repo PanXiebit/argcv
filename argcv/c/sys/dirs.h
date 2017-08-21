@@ -30,7 +30,7 @@
 extern "C" {
 #endif  // __cplusplus
 
-int dir_trav(const char* path, int recu,
+int dir_iter(const char* path, int recu,
              int (*file_handle)(const char* file_name, int is_dir, void* user),
              void* user);
 

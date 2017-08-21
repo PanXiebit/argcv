@@ -88,4 +88,5 @@ int daemon_init(const char* ident) {
 void daemon_destroy() {
   syslog(LOG_INFO, "daemon stopped");
   closelog();
+  kDaemonStatus = 0;
 }

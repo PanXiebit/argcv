@@ -54,17 +54,20 @@ sigfunc* _signal(int signo, sigfunc* func) {
   return oact.sa_handler;
 }
 
+/**
+ *
+ */
 void sig_chld(int signo) {
   pid_t pid;
   int stat;
   while ((pid = waitpid(-1, &stat, WNOHANG)) > 0) {
-#ifdef __DEBUG__
-    if (daemon_proc) {
-      syslog(LOG_DEBUG, "child %d terminated \n", pid);
-    } else {
-      fprintf(stdout, "child %d terminated \n", pid);
-    }
-#endif  // __DEBUG__
+    // #ifdef __DEBUG__
+    //     if (daemon_proc) {
+    //       syslog(LOG_DEBUG, "child %d terminated \n", pid);
+    //     } else {
+    //       fprintf(stdout, "child %d terminated \n", pid);
+    //     }
+    // #endif  // __DEBUG__
   }
   return;
 }
